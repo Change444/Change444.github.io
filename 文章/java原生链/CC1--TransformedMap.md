@@ -96,7 +96,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/%E6%96%87%E7%AB%A0/java%E5%8E%9F%E7%94%9F%E9%93%BE/CC1--TransformedMap.md" data-id="cmmfzep6c00005kwq3we91d0w" data-title="“我的第一篇文章”" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/%E6%96%87%E7%AB%A0/java%E5%8E%9F%E7%94%9F%E9%93%BE/CC1--TransformedMap.md" data-id="cmmg0fz6i0000eowqbf4oftbw" data-title="“我的第一篇文章”" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
