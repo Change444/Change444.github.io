@@ -1,0 +1,929 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言域委派是一种机制，它允许某个计算机或服务账号在已通过身份验证的用户的上下文中，代表该用户去访问网络中其他计算机或服务上的资源。 例如在下图中jack要通过web服务器来访问后台文服，但是服务账号websvc本身是没有权限访问文服的，此时，就要websvc就要代表jack去访问文服，这就是委派。  委派的目的是为了解决多层级服务的访问问题，让用户的凭据不会在每一层都传递，而是通过委派机制让后端服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="域委派攻击">
+<meta property="og:url" content="http://example.com/2026/01/15/0x03-%E5%9F%9F%E5%A7%94%E6%B4%BE/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言域委派是一种机制，它允许某个计算机或服务账号在已通过身份验证的用户的上下文中，代表该用户去访问网络中其他计算机或服务上的资源。 例如在下图中jack要通过web服务器来访问后台文服，但是服务账号websvc本身是没有权限访问文服的，此时，就要websvc就要代表jack去访问文服，这就是委派。  委派的目的是为了解决多层级服务的访问问题，让用户的凭据不会在每一层都传递，而是通过委派机制让后端服">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/assets/image-20260213185455-twcau6a.png">
+<meta property="og:image" content="http://example.com/assets/image-20260213193524-1btqoa3.png">
+<meta property="og:image" content="http://example.com/assets/image-20260213194219-ww0r3n9.png">
+<meta property="og:image" content="http://example.com/assets/image-20260213195056-w4rvvuw.png">
+<meta property="og:image" content="http://example.com/assets/image-20260315180453-5azkxe4.png">
+<meta property="og:image" content="http://example.com/assets/image-20260213200943-rut6igp.png">
+<meta property="og:image" content="http://example.com/assets/image-20260213200728-ik0wpw6.png">
+<meta property="og:image" content="http://example.com/assets/image-20260213202004-h5kr37z.png">
+<meta property="og:image" content="http://example.com/assets/image-20260215223920-bbp84pg.png">
+<meta property="og:image" content="http://example.com/assets/image-20260215231336-lvh5uco.png">
+<meta property="og:image" content="http://example.com/assets/image-20260215234242-kuvchra.png">
+<meta property="og:image" content="http://example.com/assets/image-20260215234459-50b2v72.png">
+<meta property="og:image" content="http://example.com/assets/image-20260315180348-5w8h9u1.png">
+<meta property="og:image" content="http://example.com/assets/image-20260315174258-f1ay6gg.png">
+<meta property="og:image" content="http://example.com/assets/image-20260315174447-bvmbeuo.png">
+<meta property="og:image" content="http://example.com/assets/image-20260315174504-kp0pwlq.png">
+<meta property="og:image" content="http://example.com/assets/image-20260315175429-1xihuoa.png">
+<meta property="article:published_time" content="2026-01-15T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T01:50:16.510Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="域内攻击手法学习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/assets/image-20260213185455-twcau6a.png">
+  
+  
+  
+  <title>域委派攻击 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Change</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="域委派攻击"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-15 15:30" pubdate>
+          2026年1月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">域委派攻击</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>域委派是一种机制，它允许<strong>某个计算机或服务账号</strong>在<strong>已通过身份验证的用户</strong>的上下文中，代表该用户去访问网络中<strong>其他计算机或服务</strong>上的资源。</p>
+<p>例如在下图中jack要通过web服务器来访问后台文服，但是服务账号websvc本身是没有权限访问文服的，此时，就要websvc就要代表jack去访问文服，这就是委派。</p>
+<p><img src="/assets/image-20260213185455-twcau6a.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>委派的目的是为了解决<strong>多层级服务</strong>的访问问题，让用户的凭据不会在每一层都传递，而是通过委派机制让后端服务相信前端服务是代表合法用户来访问的。</p>
+<h2 id="委派的分类"><a href="#委派的分类" class="headerlink" title="委派的分类"></a>委派的分类</h2><h3 id="非约束委派"><a href="#非约束委派" class="headerlink" title="非约束委派"></a>非约束委派</h3><p>这是最早的实现方式，极不安全。它的工作原理是：</p>
+<ol>
+<li>jack访问 WEB 服务的时候将以 Kerberos 协议向 KDC 申请访问 websvc 的 ST 票据。KDC 发现 websvc 配置了<strong>非约束性委派</strong>，于是在返回的 TGS 响应中，<strong>额外附带了一个可转发的 jack 的 TGT</strong></li>
+<li>jack 将收到的 TGT 和 ST 一起发送给 websvc，websvc将jack的TGT缓存在内存中</li>
+<li>当 websvc 需要代表 jack 访问后台文件服务器时，它直接使用内存中 jack 的 TGT，向 KDC 申请访问文件服务器的 ST 票据。</li>
+<li>KDC 验证 jack 的 TGT 有效后，检查 jack 是否有权访问文件服务器。如果有，则返回针对文件服务器的 ST 票据（代表 jack 的身份）。</li>
+<li>websvc 使用该 ST 票据向文件服务器发起请求，文件服务器验证票据后认为操作者是 jack，并根据 jack 的权限返回数据。</li>
+</ol>
+<p>在上述过程中websvc会存储jack的TGT,这就导致websvc可以<strong>无限制地模拟用户A去访问网络上的任何服务</strong>。如果一个配置了非约束性委派的服务器（如Web服务器）被攻陷，攻击者就可以在服务器内存中<strong>抓取</strong>所有访问过该服务器的用户的TGT，从而轻松接管这些用户的身份，包括域管理员。</p>
+<p><img src="/assets/image-20260213193524-1btqoa3.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ol>
+<li>非约束性委派的目标的 ACL 属性中会包：TRUSTED_FOR_DELEGATION。</li>
+<li>委派的设置需要 SeEnableDelegation 特权，通常仅域管理员有。</li>
+<li>域控主机默认是非约束性委派。</li>
+</ol>
+<h4 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h4><p>为MEMBER1配置非约束委派</p>
+<p><img src="/assets/image-20260213194219-ww0r3n9.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>配置了非约束委派的机器账户userAccountControl的值为：528384，服务账户为：824800，域控默认配置非约束委派，它的值为：532480</p>
+<p><img src="/assets/image-20260213195056-w4rvvuw.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>在实战中，我们可以通过ADFind来寻找配置了非约束委派的机器</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//非约束委派通过 userAccountControl 属性的 TRUSTED_FOR_DELEGATION (值为 524288) 标志来识别</span><br>AdFind.exe -b <span class="hljs-string">&quot;DC=test,DC=internal&quot;</span> -f <span class="hljs-string">&quot;(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=524288))&quot;</span> cn distinguishedName<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260315180453-5azkxe4.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>控制域管访问该机器触发<strong>Kerberos认证</strong>。这里没用smb协议，如果使用 <code>SMB协议</code>​（如 <code>net use \\serverA\c$</code>​ 或 <code>dir \\serverA\c$</code>​）访问共享，且客户端和服务器在同一个网段，操作系统<strong>可能会优先使用NTLM协议进行认证</strong>，而不是Kerberos。另外还要注意使用FQDN，而不是IP或NetBIOS名</p>
+<p><img src="/assets/image-20260213200943-rut6igp.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>访问完之后使用mimikatz抓取缓存的票据，发现Administrator的票据被缓存在了内存中</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//mimikatz</span><br>privilege::debug<br>sekurlsa::tickets /export<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260213200728-ik0wpw6.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>在mimikatz中将票据导入进程即可伪造域管身份</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">Kerberos：：ptt 票据文件<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260213202004-h5kr37z.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<h3 id="约束性委派"><a href="#约束性委派" class="headerlink" title="约束性委派"></a>约束性委派</h3><p>由于非约束委派存在过度授权、风险过高的问题。微软在 Windows Server 2003 中引入了约束委派。</p>
+<p>在了解它的原理之前先要了解S4U2Self 与 S4U2Proxy这两个协议</p>
+<ol>
+<li><strong>S4U2Self (Service for User to Self)</strong> ：允许服务<strong>为自己</strong>获取一个代表指定用户的<strong>可转发服务票据</strong>（Forwardable Service Ticket），即使该用户尚未通过 Kerberos 向此服务认证过。</li>
+<li><strong>S4U2Proxy (Service for User to Proxy)</strong> ：允许服务将 S4U2Self 获取的用户票据（或用户直接提供的票据）转发给 KDC，以请求访问后端服务的票据。</li>
+</ol>
+<p>这两个协议是配合使用的，一般流程是：</p>
+<ol>
+<li><p>用户通过 Kerberos 向KDC申请访问前端服务（<code>websrv</code>​）的服务票据（ST），验证后KDC会颁发一个针对<code>websrv</code>的服务票据（ST1）</p>
+</li>
+<li><p>用户拿着这个ST1向<code>websrv</code>建立安全会话，确认用户身份</p>
+</li>
+<li><p>当前端服务需要访问后端服务时，<code>websrv</code>​会使用自己的机器账号（<code>WEBSRV$</code>​）的 TGT，向 KDC 发起一个 <strong>S4U2Proxy</strong> 请求。</p>
+</li>
+<li><p>KDC 收到请求后，进行两项检查：</p>
+<ul>
+<li>验证 <code>WEBSRV$</code> 是否具有约束委派权限。</li>
+<li>检查 <code>WEBSRV$</code>​ 的 <code>msDS-AllowedToDelegateTo</code> 属性中是否包含该服务（也就是白名单）</li>
+</ul>
+</li>
+<li><p>检查通过后，KDC会生成一个针对指定后端服务的服务票据（ST2）并返回</p>
+</li>
+<li><p>前端服务拿着这个票据访问后端服务，确认当前操作者的身份为用户</p>
+</li>
+</ol>
+<p>这样就避免了用户的TGT留在服务账号上，相对非约束委派安全性得到了提升，这里用ruyue师傅的图来总结一下流程</p>
+<p><img src="/assets/image-20260215223920-bbp84pg.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>用户通过非Kerberos协议（如NTLM、表单登录）访问前端服务是无法获取票据ST1的，这时候就要通过<strong>S4U2Self</strong>协议，让服务主机代替向KDC申请服务票据，这里再放一张ruyue师傅的图方便理解</p>
+<p><img src="/assets/image-20260215231336-lvh5uco.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<h4 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h4><p>S4U2Self 请求的本质是向KDC发起一个S4U2Self请求，KDC在接受这个请求之后只会做三个校验：</p>
+<ol>
+<li>验证请求是否真的是由<code>websrv$</code>发起的，而不是被伪造的</li>
+<li>检查WEBSRV$的账户属性，看它是否被授予了<strong>协议转换（Protocol Transition）</strong> 的权限</li>
+<li>验证目标是否允许被委派</li>
+</ol>
+<p>KDC并不会管用户是否同意被委派，除非该用户被设置为敏感账户，这就导致如果如果一台被允许约束性委派的机器被控制后，就可以利用这个服务账号代表任意用户进行 S4U2self 获得 ST1，然后把获取到的票据用于 S42proxy，从而获取另一个服务的 ST2</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>我们先为域内主机设置约束委派，这里设置了可以委派至域控的文件共享服务</p>
+<p><img src="/assets/image-20260215234242-kuvchra.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>验证配置是否生效</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">Get-ADComputer MEMBER1 -Properties msDS-AllowedToDelegateTo | Select-Object -ExpandProperty msDS-AllowedToDelegateTo<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260215234459-50b2v72.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>在实战中，我们可以通过ADFind来寻找配置了约束性委派的账号</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//约束委派通过检查 msDS-AllowedToDelegateTo 属性是否存在且不为空来判断</span><br>AdFind.exe -b <span class="hljs-string">&quot;DC=test,DC=internal&quot;</span> -f <span class="hljs-string">&quot;(&amp;(samAccountType=805306369)(msDS-AllowedToDelegateTo=*))&quot;</span> cn distinguishedName msDS-AllowedToDelegateTo<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260315180348-5w8h9u1.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>可以看到member1这台机器被配置了约束性委派，我们要做的就是拿到member1$机器账户的hash，这一步可以在对应主机运行mimikatz,通过命令<code>sekurlsa：：logonpasswords</code>获得，这里略过</p>
+<p>然后使用kekeo，根据机器账户的hash申请TGT</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">tgt::ask /user:MEMBER1$ /domain:test.internal /ntlm:<span class="hljs-number">82444</span>c594c49ddfeea6f4bd78290cfb4<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260315174258-f1ay6gg.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>利用这个TGT向TGS申请域管理员Administrator的服务票据ST</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">tgs::s4u /tgt:TGT_MEMBER1$@TEST.INTERNAL_krbtgt~test.internal@TEST.INTERNAL.kirbi /user:administrator@test.internal /service:cifs/DC01.test.internal<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260315174447-bvmbeuo.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p><img src="/assets/image-20260315174504-kp0pwlq.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>将票据注入到内存中，查看票据发现多了一张administrator的票据，获得域控DC01的权限</p>
+<p><img src="/assets/image-20260315175429-1xihuoa.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" class="category-chain-item">内网安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9F%9F%E5%86%85%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E5%AD%A6%E4%B9%A0/" class="print-no-link">#域内攻击手法学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>域委派攻击</div>
+      <div>http://example.com/2026/01/15/0x03-域委派/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/22/0x04-DCSync%20%E6%94%BB%E5%87%BB/" title="DCSync攻击">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">DCSync攻击</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/09/0x02-%E5%93%88%E5%B8%8C%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB/" title="哈希中继攻击">
+                        <span class="hidden-mobile">哈希中继攻击</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

