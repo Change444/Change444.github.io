@@ -333,6 +333,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2024/10/28/CC7/" target="_self">
+          CC7反序列化链分析
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/28/CC7/" target="_self">
+        <div>
+          前言最后几条cc链了，冲冲冲 流程  分析根据图片可以看到后半段依然没变，相比CC5，分歧点出现在LazyMap之前，我们一步步看 既然分析点在LazyMap之前，那么自然而然就能想到肯定要找到另一个调用get方法的类，在CC7中用到AbstractMap.equals，这是一个抽象类，当调用一个继承这个类的map的equals时，程序会经过AbstractMapDecorator.equals然
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-10-28 15:30" pubdate>
+              2024-10-28
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">#安全研究</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2024/10/22/CC5/" target="_self">
           CC5反序列化链分析
         </a>
