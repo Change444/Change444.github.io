@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://example.com/assets/image-20260330145047-p3phbef.png">
 <meta property="og:image" content="http://example.com/assets/image-20260330145850-vy6puv1.png">
 <meta property="article:published_time" content="2026-04-04T10:30:00.000Z">
-<meta property="article:modified_time" content="2026-04-04T09:14:31.384Z">
+<meta property="article:modified_time" content="2026-04-04T09:18:02.159Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
@@ -466,7 +466,7 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml">Select|insert|update|delete|java.sql.Connection|Statement|.execute|.executeQue<br>ry|jdbcTemplate|queryForInt|queryForObject|queryForMap|getConnection|PreparedS<br>tatement|Statement|execute|jdbcTemplate|queryForInt|queryForObject|queryForMap<br>|executeQuery|getConnection|createQuery||session.save||session.update||session<br>.delete|$|#|<br></code></pre></td></tr></table></figure>
 
 <h1 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h1><p>XSS 是通过对⽹⻚插⼊可执⾏代码且成功地被浏览器执⾏，以达到攻击的⽬的。根据服务端的后端代码不同，XSS 的种类也不相同，⼀般可以分为反射型、存储型以及DOM 型。</p>
-<h2 id="反射性XSS"><a href="#反射性XSS" class="headerlink" title="反射性XSS"></a>反射性XSS</h2><p>从&#x2F;reflect接口获取input输入不做任何处理直接输出在页面上</p>
+<h2 id="反射型XSS"><a href="#反射型XSS" class="headerlink" title="反射型XSS"></a>反射型XSS</h2><p>从&#x2F;reflect接口获取input输入不做任何处理直接输出在页面上</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@GetMapping(&quot;/reflect&quot;)</span><br><span class="hljs-keyword">public</span> String <span class="hljs-title function_">reflectXss</span><span class="hljs-params">(<span class="hljs-meta">@RequestParam(required = false)</span> String input, Model model)</span> &#123;<br>    <span class="hljs-keyword">if</span> (input != <span class="hljs-literal">null</span>) &#123;<br>        model.addAttribute(<span class="hljs-string">&quot;input&quot;</span>, input);<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;xss-reflect&quot;</span>;<br>&#125;<br><br><span class="hljs-comment">//html代碼</span><br>&lt;div th:<span class="hljs-keyword">if</span>=<span class="hljs-string">&quot;$&#123;input&#125;&quot;</span> class=<span class="hljs-string">&quot;result&quot;</span>&gt;<br>	<span class="hljs-comment">//漏洞代码：使用 th:utext 不转义输出</span><br>    &lt;div th:utext=<span class="hljs-string">&quot;$&#123;input&#125;&quot;</span>&gt;&lt;/div&gt;<br>&lt;/div&gt;<br></code></pre></td></tr></table></figure>
 
 <h2 id="存储型XSS"><a href="#存储型XSS" class="headerlink" title="存储型XSS"></a>存储型XSS</h2><p>发布评论后被调用&#x2F;stored接口将评论存储在comment中，前端调用comment时不经过处理将导致存储XSS</p>
