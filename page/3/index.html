@@ -333,6 +333,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2024/12/22/RMI/" target="_self">
+          RMI机制分析
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/12/22/RMI/" target="_self">
+        <div>
+          什么是RMIJava RMI（Remote Method Invocation，远程方法调用）是一种用于在分布式系统中进行远程通信的机制。它允许一个Java虚拟机（JVM）上的对象调用另一个JVM上的对象方法，就像调用本地方法一样。 RMI 的核心概念 远程对象：存在于远程JVM中的对象，客户端可以通过网络调用其方法。 存根（Stub）和骨架（Skeleton）： Stub：客户端的代理，负责将调
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-12-22 18:30" pubdate>
+              2024-12-22
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">#安全研究</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2024/12/07/CB1/" target="_self">
           CB1反序列化链分析
         </a>
@@ -839,67 +900,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2024-10-09 15:30" pubdate>
               2024-10-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">#安全研究</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/10/07/cc1LazyMap/" target="_self">
-          CC1-LazyMap反序列化链分析
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/10/07/cc1LazyMap/" target="_self">
-        <div>
-          构造目标类还是InvokerTransformer，分歧点出现在transform方法的调用处，上面的用到的是TransformedMap类，而这里是LazyMap。 查找危险方法的用法，LazyMap类在get方法中调用了factory的transform方法，查找factory是哪来的   可以看到factory有构造方法传入，而构造方法的作用域是protected，所以要靠decorate函
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-10-07 15:30" pubdate>
-              2024-10-07
             </time>
           </div>
         
