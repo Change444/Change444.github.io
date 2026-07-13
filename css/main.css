@@ -1398,6 +1398,10 @@ figure.highlight td.code > pre {
   border-top: 1px solid var(--line-color);
   margin: 2em 0;
 }
+.markdown-body .image-caption,
+.markdown-body figcaption {
+  display: none !important;
+}
 .markdown-body .mermaid {
   text-align: center;
   margin: 1.5em 0;
