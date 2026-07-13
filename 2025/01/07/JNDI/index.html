@@ -22,29 +22,29 @@
     <meta name="description" content="什么是JNDIJNDI（Java Naming and Directory Interface，Java 命名和目录接口） 是 Java 提供的一种用于访问命名和目录服务的 API。它允许 Java 应用程序通过统一的接口访问各种命名和目录服务，例如 LDAP、DNS、RMI Registry、文件系统等。 jndi 在 jdk 里面支持以下四种服务  LDAP：轻量级目录访问协议 通用对象请求代">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JNDI注入分析">
-<meta property="og:url" content="http://example.com/2025/01/07/JNDI/index.html">
+<meta property="og:url" content="https://change444.github.io/2025/01/07/JNDI/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="什么是JNDIJNDI（Java Naming and Directory Interface，Java 命名和目录接口） 是 Java 提供的一种用于访问命名和目录服务的 API。它允许 Java 应用程序通过统一的接口访问各种命名和目录服务，例如 LDAP、DNS、RMI Registry、文件系统等。 jndi 在 jdk 里面支持以下四种服务  LDAP：轻量级目录访问协议 通用对象请求代">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2025/1741922459539-b0ebc99a-f3ad-4f93-8c0f-a7fe18144ad9.png">
-<meta property="og:image" content="http://example.com/images/2025/1741922950665-7f36f94b-311c-49db-87e5-d28eaff072e5.png">
-<meta property="og:image" content="http://example.com/images/2025/1741923230434-c9757cd3-2c13-4a95-9abb-8a65b8fb1226.png">
-<meta property="og:image" content="http://example.com/images/2025/1742027818023-1e8280d3-a1d8-407b-9825-9c9dc50bc994.png">
-<meta property="og:image" content="http://example.com/images/2025/1742028069682-248d3be9-f21e-4b1d-b5ab-217d8d494d74.png">
-<meta property="og:image" content="http://example.com/images/2025/1742028488325-0ca099ff-082f-4e5e-ba42-317981b24ed9.png">
-<meta property="og:image" content="http://example.com/images/2025/1742028794431-695caf93-24ee-4c79-949b-1c166560966d.png">
-<meta property="og:image" content="http://example.com/images/2025/1742028898784-e5e6bd14-3840-467a-9444-25d1730bd240.png">
-<meta property="og:image" content="http://example.com/images/2025/1742114379531-a7ec5c06-4b97-4699-99e0-c795911d4cce.png">
-<meta property="og:image" content="http://example.com/images/2025/1742114191526-aec09489-6474-45e6-a80f-02a97bea5bf4.png">
-<meta property="og:image" content="http://example.com/images/2025/1742114488066-d86a2d1a-30d3-4089-beb6-1db44049391b.png">
-<meta property="og:image" content="http://example.com/images/2025/1742116012496-758ee33c-11d9-4709-8e46-2f59106a4fce.png">
-<meta property="og:image" content="http://example.com/images/2025/1742352674403-51b38273-e89b-4563-902a-98fce5fc01fe.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1741922459539-b0ebc99a-f3ad-4f93-8c0f-a7fe18144ad9.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1741922950665-7f36f94b-311c-49db-87e5-d28eaff072e5.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1741923230434-c9757cd3-2c13-4a95-9abb-8a65b8fb1226.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742027818023-1e8280d3-a1d8-407b-9825-9c9dc50bc994.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742028069682-248d3be9-f21e-4b1d-b5ab-217d8d494d74.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742028488325-0ca099ff-082f-4e5e-ba42-317981b24ed9.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742028794431-695caf93-24ee-4c79-949b-1c166560966d.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742028898784-e5e6bd14-3840-467a-9444-25d1730bd240.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742114379531-a7ec5c06-4b97-4699-99e0-c795911d4cce.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742114191526-aec09489-6474-45e6-a80f-02a97bea5bf4.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742114488066-d86a2d1a-30d3-4089-beb6-1db44049391b.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742116012496-758ee33c-11d9-4709-8e46-2f59106a4fce.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1742352674403-51b38273-e89b-4563-902a-98fce5fc01fe.png">
 <meta property="article:published_time" content="2025-01-07T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T01:54:24.869Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2025/1741922459539-b0ebc99a-f3ad-4f93-8c0f-a7fe18144ad9.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2025/1741922459539-b0ebc99a-f3ad-4f93-8c0f-a7fe18144ad9.png">
   
   
   
@@ -86,7 +86,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -402,7 +402,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>JNDI注入分析</div>
-      <div>http://example.com/2025/01/07/JNDI/</div>
+      <div>https://change444.github.io/2025/01/07/JNDI/</div>
     </div>
     <div class="license-meta">
       

@@ -22,33 +22,33 @@
     <meta name="description" content="前言域委派是一种机制，它允许某个计算机或服务账号在已通过身份验证的用户的上下文中，代表该用户去访问网络中其他计算机或服务上的资源。 例如在下图中jack要通过web服务器来访问后台文服，但是服务账号websvc本身是没有权限访问文服的，此时，就要websvc就要代表jack去访问文服，这就是委派。  委派的目的是为了解决多层级服务的访问问题，让用户的凭据不会在每一层都传递，而是通过委派机制让后端服">
 <meta property="og:type" content="article">
 <meta property="og:title" content="域委派攻击">
-<meta property="og:url" content="http://example.com/2026/01/15/0x03-%E5%9F%9F%E5%A7%94%E6%B4%BE/index.html">
+<meta property="og:url" content="https://change444.github.io/2026/01/15/0x03-%E5%9F%9F%E5%A7%94%E6%B4%BE/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言域委派是一种机制，它允许某个计算机或服务账号在已通过身份验证的用户的上下文中，代表该用户去访问网络中其他计算机或服务上的资源。 例如在下图中jack要通过web服务器来访问后台文服，但是服务账号websvc本身是没有权限访问文服的，此时，就要websvc就要代表jack去访问文服，这就是委派。  委派的目的是为了解决多层级服务的访问问题，让用户的凭据不会在每一层都传递，而是通过委派机制让后端服">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/assets/image-20260213185455-twcau6a.png">
-<meta property="og:image" content="http://example.com/assets/image-20260213193524-1btqoa3.png">
-<meta property="og:image" content="http://example.com/assets/image-20260213194219-ww0r3n9.png">
-<meta property="og:image" content="http://example.com/assets/image-20260213195056-w4rvvuw.png">
-<meta property="og:image" content="http://example.com/assets/image-20260315180453-5azkxe4.png">
-<meta property="og:image" content="http://example.com/assets/image-20260213200943-rut6igp.png">
-<meta property="og:image" content="http://example.com/assets/image-20260213200728-ik0wpw6.png">
-<meta property="og:image" content="http://example.com/assets/image-20260213202004-h5kr37z.png">
-<meta property="og:image" content="http://example.com/assets/image-20260215223920-bbp84pg.png">
-<meta property="og:image" content="http://example.com/assets/image-20260215231336-lvh5uco.png">
-<meta property="og:image" content="http://example.com/assets/image-20260215234242-kuvchra.png">
-<meta property="og:image" content="http://example.com/assets/image-20260215234459-50b2v72.png">
-<meta property="og:image" content="http://example.com/assets/image-20260315180348-5w8h9u1.png">
-<meta property="og:image" content="http://example.com/assets/image-20260315174258-f1ay6gg.png">
-<meta property="og:image" content="http://example.com/assets/image-20260315174447-bvmbeuo.png">
-<meta property="og:image" content="http://example.com/assets/image-20260315174504-kp0pwlq.png">
-<meta property="og:image" content="http://example.com/assets/image-20260315175429-1xihuoa.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213185455-twcau6a.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213193524-1btqoa3.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213194219-ww0r3n9.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213195056-w4rvvuw.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260315180453-5azkxe4.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213200943-rut6igp.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213200728-ik0wpw6.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260213202004-h5kr37z.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260215223920-bbp84pg.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260215231336-lvh5uco.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260215234242-kuvchra.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260215234459-50b2v72.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260315180348-5w8h9u1.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260315174258-f1ay6gg.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260315174447-bvmbeuo.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260315174504-kp0pwlq.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260315175429-1xihuoa.png">
 <meta property="article:published_time" content="2026-01-15T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T01:50:16.510Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="域内攻击手法学习">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/assets/image-20260213185455-twcau6a.png">
+<meta name="twitter:image" content="https://change444.github.io/assets/image-20260213185455-twcau6a.png">
   
   
   
@@ -90,7 +90,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -402,7 +402,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>域委派攻击</div>
-      <div>http://example.com/2026/01/15/0x03-域委派/</div>
+      <div>https://change444.github.io/2026/01/15/0x03-域委派/</div>
     </div>
     <div class="license-meta">
       

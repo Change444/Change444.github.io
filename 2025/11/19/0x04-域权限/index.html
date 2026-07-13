@@ -22,20 +22,20 @@
     <meta name="description" content="windows访问控制模型Active Directory权限控制依赖windows访问控制模型来实现，关于windows访问控制模型是什么，用大白话讲就是定义谁在什么条件下可以对什么执行操作， 这个以后再细学。 windows 访问控制模型是由两部分组成。 ●   访问令牌（Access Token）包含用户的标识(User SID,Group SIDS)，以及特权列表。 ●   安全描述符（s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="域权限">
-<meta property="og:url" content="http://example.com/2025/11/19/0x04-%E5%9F%9F%E6%9D%83%E9%99%90/index.html">
+<meta property="og:url" content="https://change444.github.io/2025/11/19/0x04-%E5%9F%9F%E6%9D%83%E9%99%90/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="windows访问控制模型Active Directory权限控制依赖windows访问控制模型来实现，关于windows访问控制模型是什么，用大白话讲就是定义谁在什么条件下可以对什么执行操作， 这个以后再细学。 windows 访问控制模型是由两部分组成。 ●   访问令牌（Access Token）包含用户的标识(User SID,Group SIDS)，以及特权列表。 ●   安全描述符（s">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/assets/image-20251218162208-mi92u8m.png">
-<meta property="og:image" content="http://example.com/assets/image-20251009155731-6dtbmf6.png">
-<meta property="og:image" content="http://example.com/assets/image-20251219093242-ng8e6mn.png">
-<meta property="og:image" content="http://example.com/assets/image-20251219094704-t5uqkp3.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20251218162208-mi92u8m.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20251009155731-6dtbmf6.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20251219093242-ng8e6mn.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20251219094704-t5uqkp3.png">
 <meta property="article:published_time" content="2025-11-19T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T02:08:07.534Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="域基础">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/assets/image-20251218162208-mi92u8m.png">
+<meta name="twitter:image" content="https://change444.github.io/assets/image-20251218162208-mi92u8m.png">
   
   
   
@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -385,7 +385,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>域权限</div>
-      <div>http://example.com/2025/11/19/0x04-域权限/</div>
+      <div>https://change444.github.io/2025/11/19/0x04-域权限/</div>
     </div>
     <div class="license-meta">
       

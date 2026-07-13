@@ -22,20 +22,20 @@
     <meta name="description" content="前言什么是Commons BeanUtilsApache Commons BeanUtils 是 Apache Commons 项目集的一个子项目，它提供了一组工具类，包含了属性拷贝、类型转换、属性获取和设置等功能，用于简化 JavaBean 的属性操作 什么是JavaBeanJavaBean 是一种遵循特定编写规范的 Java 类，通常用于表示应用程序的数据模型。 例如： 12345678910">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CB1反序列化链分析">
-<meta property="og:url" content="http://example.com/2024/12/07/CB1/index.html">
+<meta property="og:url" content="https://change444.github.io/2024/12/07/CB1/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言什么是Commons BeanUtilsApache Commons BeanUtils 是 Apache Commons 项目集的一个子项目，它提供了一组工具类，包含了属性拷贝、类型转换、属性获取和设置等功能，用于简化 JavaBean 的属性操作 什么是JavaBeanJavaBean 是一种遵循特定编写规范的 Java 类，通常用于表示应用程序的数据模型。 例如： 12345678910">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2024/1734596840617-adfe8e31-158f-4ac2-887c-42dedf62985b.png">
-<meta property="og:image" content="http://example.com/images/2024/1734597275510-abe07a7f-cc58-4643-8b5a-ed383f4f79e6.png">
-<meta property="og:image" content="http://example.com/images/2024/1734597688202-7e38d0cc-7037-44ce-ba66-8897b385fd6e.png">
-<meta property="og:image" content="http://example.com/images/2024/1734597954017-c1437208-d1cf-4b84-ab47-c1650370b426.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1734596840617-adfe8e31-158f-4ac2-887c-42dedf62985b.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1734597275510-abe07a7f-cc58-4643-8b5a-ed383f4f79e6.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1734597688202-7e38d0cc-7037-44ce-ba66-8897b385fd6e.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1734597954017-c1437208-d1cf-4b84-ab47-c1650370b426.png">
 <meta property="article:published_time" content="2024-12-07T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T01:51:37.443Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2024/1734596840617-adfe8e31-158f-4ac2-887c-42dedf62985b.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2024/1734596840617-adfe8e31-158f-4ac2-887c-42dedf62985b.png">
   
   
   
@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -323,7 +323,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>CB1反序列化链分析</div>
-      <div>http://example.com/2024/12/07/CB1/</div>
+      <div>https://change444.github.io/2024/12/07/CB1/</div>
     </div>
     <div class="license-meta">
       

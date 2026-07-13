@@ -22,36 +22,36 @@
     <meta name="description" content="前言在java类动态加载里讲过，当一个类被初始化后其中静态代码块的代码会自动执行。设想一个情况，假如我们已知目标主机存在危险字节码文件，如果存在一个类可以加载任意字节码文件，我们是不是可以调用这个类来加载那个危险字节码文件以达到成功攻击的目的？ 初步尝试-利用TemplatesImpl#defineClass在类加载这篇文章讲了利用 ClassLoader#defineClass 直接加载字节码这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CC3反序列化链分析">
-<meta property="og:url" content="http://example.com/2024/10/12/CC3/index.html">
+<meta property="og:url" content="https://change444.github.io/2024/10/12/CC3/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言在java类动态加载里讲过，当一个类被初始化后其中静态代码块的代码会自动执行。设想一个情况，假如我们已知目标主机存在危险字节码文件，如果存在一个类可以加载任意字节码文件，我们是不是可以调用这个类来加载那个危险字节码文件以达到成功攻击的目的？ 初步尝试-利用TemplatesImpl#defineClass在类加载这篇文章讲了利用 ClassLoader#defineClass 直接加载字节码这">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2024/1732783469027-d50e96cd-dd15-4183-87ea-74db05653967.png">
-<meta property="og:image" content="http://example.com/images/2024/1732783750096-e9f6afd9-1357-4085-be7e-3eb28badb12a.png">
-<meta property="og:image" content="http://example.com/images/2024/1732783811277-809ba0ad-1770-4ce1-a39d-4b03f33097bc.png">
-<meta property="og:image" content="http://example.com/images/2024/1732783930835-5e6d20a6-d685-4edb-9422-c7af25f4b9d9.png">
-<meta property="og:image" content="http://example.com/images/2024/1732784351628-72efa726-028d-4ed7-be9d-1b006a05479f.png">
-<meta property="og:image" content="http://example.com/images/2024/1732784433415-4f78b3c4-d630-4189-bb58-b1d2c2a62e1d.png">
-<meta property="og:image" content="http://example.com/images/2024/1732784700095-9494bf3c-30da-462c-84ef-41602c53d2db.jpeg">
-<meta property="og:image" content="http://example.com/images/2024/1732785015171-5a26ee9c-341e-4807-af78-a1b88d5ff3d0.png">
-<meta property="og:image" content="http://example.com/images/2024/1732785117087-e4cb9c68-c903-43b9-9266-2939a800cf71.png">
-<meta property="og:image" content="http://example.com/images/2024/1732785322861-c12fcc67-da98-4322-a402-8b084a179e3e.png">
-<meta property="og:image" content="http://example.com/images/2024/1732785431460-9b46eb9a-4694-46dc-b5c7-8f4a3d42aa81.png">
-<meta property="og:image" content="http://example.com/images/2024/1732785563830-08e6604f-213a-4e82-931c-0879d8533f26.png">
-<meta property="og:image" content="http://example.com/images/2024/1732785576775-92764fe7-47e4-4565-b92f-d6a3eb659cb6.png">
-<meta property="og:image" content="http://example.com/images/2024/1732786801512-e0dcc3bf-cbd0-41e3-9610-66b21f8d891e.png">
-<meta property="og:image" content="http://example.com/images/2024/1733052326163-aa65ac66-378b-4788-a742-e5fe94e7627f.png">
-<meta property="og:image" content="http://example.com/images/2024/1732867466904-f7636878-e786-4934-afed-15040ee0a98e.png">
-<meta property="og:image" content="http://example.com/images/2024/1732869485742-d590bc92-5af8-44bc-87dd-b9a0f0e24bba.png">
-<meta property="og:image" content="http://example.com/images/2024/1732869751759-fb8c63cc-9b37-45c4-92e4-173a74b50d16.png">
-<meta property="og:image" content="http://example.com/images/2024/1732869943791-d4977df1-de0e-41ab-a05b-236a14cb57e3.png">
-<meta property="og:image" content="http://example.com/images/2024/1732870282591-5300395a-9b19-4c2c-8bba-cc24742832bd.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732783469027-d50e96cd-dd15-4183-87ea-74db05653967.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732783750096-e9f6afd9-1357-4085-be7e-3eb28badb12a.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732783811277-809ba0ad-1770-4ce1-a39d-4b03f33097bc.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732783930835-5e6d20a6-d685-4edb-9422-c7af25f4b9d9.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732784351628-72efa726-028d-4ed7-be9d-1b006a05479f.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732784433415-4f78b3c4-d630-4189-bb58-b1d2c2a62e1d.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732784700095-9494bf3c-30da-462c-84ef-41602c53d2db.jpeg">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732785015171-5a26ee9c-341e-4807-af78-a1b88d5ff3d0.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732785117087-e4cb9c68-c903-43b9-9266-2939a800cf71.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732785322861-c12fcc67-da98-4322-a402-8b084a179e3e.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732785431460-9b46eb9a-4694-46dc-b5c7-8f4a3d42aa81.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732785563830-08e6604f-213a-4e82-931c-0879d8533f26.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732785576775-92764fe7-47e4-4565-b92f-d6a3eb659cb6.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732786801512-e0dcc3bf-cbd0-41e3-9610-66b21f8d891e.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733052326163-aa65ac66-378b-4788-a742-e5fe94e7627f.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732867466904-f7636878-e786-4934-afed-15040ee0a98e.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732869485742-d590bc92-5af8-44bc-87dd-b9a0f0e24bba.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732869751759-fb8c63cc-9b37-45c4-92e4-173a74b50d16.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732869943791-d4977df1-de0e-41ab-a05b-236a14cb57e3.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1732870282591-5300395a-9b19-4c2c-8bba-cc24742832bd.png">
 <meta property="article:published_time" content="2024-10-12T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T01:52:46.150Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2024/1732783469027-d50e96cd-dd15-4183-87ea-74db05653967.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2024/1732783469027-d50e96cd-dd15-4183-87ea-74db05653967.png">
   
   
   
@@ -93,7 +93,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -412,7 +412,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>CC3反序列化链分析</div>
-      <div>http://example.com/2024/10/12/CC3/</div>
+      <div>https://change444.github.io/2024/10/12/CC3/</div>
     </div>
     <div class="license-meta">
       

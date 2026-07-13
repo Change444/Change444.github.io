@@ -22,24 +22,24 @@
     <meta name="description" content="构造目标类还是InvokerTransformer，分歧点出现在transform方法的调用处，上面的用到的是TransformedMap类，而这里是LazyMap。 查找危险方法的用法，LazyMap类在get方法中调用了factory的transform方法，查找factory是哪来的   可以看到factory有构造方法传入，而构造方法的作用域是protected，所以要靠decorate函">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CC1-LazyMap反序列化链分析">
-<meta property="og:url" content="http://example.com/2024/10/07/cc1LazyMap/index.html">
+<meta property="og:url" content="https://change444.github.io/2024/10/07/cc1LazyMap/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="构造目标类还是InvokerTransformer，分歧点出现在transform方法的调用处，上面的用到的是TransformedMap类，而这里是LazyMap。 查找危险方法的用法，LazyMap类在get方法中调用了factory的transform方法，查找factory是哪来的   可以看到factory有构造方法传入，而构造方法的作用域是protected，所以要靠decorate函">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2024/1730978928457-239b1331-3586-49ed-9c51-b3543d2a1688.png">
-<meta property="og:image" content="http://example.com/images/2024/1730979090068-787970a8-a0a2-4155-8a4f-c97148d31fe4.png">
-<meta property="og:image" content="http://example.com/images/2024/1730979902156-cbbce3b6-1d11-4385-a044-3570784eee00.png">
-<meta property="og:image" content="http://example.com/images/2024/1730980076930-86e17832-a78e-4880-885c-9b31ac0dc08a.png">
-<meta property="og:image" content="http://example.com/images/2024/1730980514735-abd5846a-bcfb-4ad1-9f22-b802a4c762f7.png">
-<meta property="og:image" content="http://example.com/images/2024/1730982946200-d6aae997-540c-4e3d-ac62-c26ba26667c2.png">
-<meta property="og:image" content="http://example.com/images/2024/1730985133451-415ec8a7-d07c-4409-a1b7-3608c0c14af2.png">
-<meta property="og:image" content="http://example.com/images/2024/1731035517514-6a2fe227-64b2-4db0-a497-23f774a48f5e.jpeg">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730978928457-239b1331-3586-49ed-9c51-b3543d2a1688.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730979090068-787970a8-a0a2-4155-8a4f-c97148d31fe4.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730979902156-cbbce3b6-1d11-4385-a044-3570784eee00.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730980076930-86e17832-a78e-4880-885c-9b31ac0dc08a.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730980514735-abd5846a-bcfb-4ad1-9f22-b802a4c762f7.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730982946200-d6aae997-540c-4e3d-ac62-c26ba26667c2.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1730985133451-415ec8a7-d07c-4409-a1b7-3608c0c14af2.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731035517514-6a2fe227-64b2-4db0-a497-23f774a48f5e.jpeg">
 <meta property="article:published_time" content="2024-10-07T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T06:37:27.772Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2024/1730978928457-239b1331-3586-49ed-9c51-b3543d2a1688.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2024/1730978928457-239b1331-3586-49ed-9c51-b3543d2a1688.png">
   
   
   
@@ -81,7 +81,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -323,7 +323,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>CC1-LazyMap反序列化链分析</div>
-      <div>http://example.com/2024/10/07/cc1LazyMap/</div>
+      <div>https://change444.github.io/2024/10/07/cc1LazyMap/</div>
     </div>
     <div class="license-meta">
       

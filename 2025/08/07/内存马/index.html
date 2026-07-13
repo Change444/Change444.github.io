@@ -22,103 +22,103 @@
     <meta name="description" content="前言内存马是一种将恶意代码直接注入到应用程序运行时内存中的技术手段。与传统的基于文件的WebShell不同，内存马不依赖于磁盘上的任何持久化存储，而是利用Java、.NET等语言提供的反射机制或动态编译功能，在内存中创建并执行恶意逻辑。这种方式不仅能够绕过大多数基于文件扫描的安全防护措施，而且由于其高度的灵活性和隐蔽性，使得一旦成功植入，很难被发现和清除。 java内存马常见类型 动态注册serv">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内存马分析">
-<meta property="og:url" content="http://example.com/2025/08/07/%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
+<meta property="og:url" content="https://change444.github.io/2025/08/07/%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言内存马是一种将恶意代码直接注入到应用程序运行时内存中的技术手段。与传统的基于文件的WebShell不同，内存马不依赖于磁盘上的任何持久化存储，而是利用Java、.NET等语言提供的反射机制或动态编译功能，在内存中创建并执行恶意逻辑。这种方式不仅能够绕过大多数基于文件扫描的安全防护措施，而且由于其高度的灵活性和隐蔽性，使得一旦成功植入，很难被发现和清除。 java内存马常见类型 动态注册serv">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2025/1757581600820-5265b73c-1697-439b-8e3e-0f52eb6e06ba.png">
-<meta property="og:image" content="http://example.com/images/2025/1757647580444-cf0a8219-e9e0-4dc8-b201-b33870a4e8dd.png">
-<meta property="og:image" content="http://example.com/images/2025/1757647710267-bbd31de8-7c7d-4210-b846-bef7c8c66ec9.png">
-<meta property="og:image" content="http://example.com/images/2025/1757648003373-bb26c145-7a25-4d35-8627-aa44b6339534.png">
-<meta property="og:image" content="http://example.com/images/2025/1757648141991-182e1336-9c98-48b1-8fe6-acfc029bccfe.png">
-<meta property="og:image" content="http://example.com/images/2025/1757648385076-c3fac059-06af-40b8-a32a-046f1c202c7d.png">
-<meta property="og:image" content="http://example.com/images/2025/1757659785675-9b021681-1727-4cc1-8de0-d1d2d9718076.png">
-<meta property="og:image" content="http://example.com/images/2025/1757660347250-096c357c-82a9-4666-9dc5-0e0c5cde9889.png">
-<meta property="og:image" content="http://example.com/images/2025/1757660763253-e1264610-2814-4bdc-9f81-29a21933e8e1.png">
-<meta property="og:image" content="http://example.com/images/2025/1757664653858-1f7313c8-5678-41f8-b11d-eeecad1f85f0.png">
-<meta property="og:image" content="http://example.com/images/2025/1757903610771-c57bbbff-4b55-484d-b579-bb7e9ddb62f8.png">
-<meta property="og:image" content="http://example.com/images/2025/1757905611765-c26da1b2-20c6-4f85-b6c8-0e495c8cb0e4.png">
-<meta property="og:image" content="http://example.com/images/2025/1757925688976-af56469e-1616-43d4-87ee-b073c75d9ef5.png">
-<meta property="og:image" content="http://example.com/images/2025/1757926888276-14279fa2-3102-447b-869d-4511b2bb8cdf.png">
-<meta property="og:image" content="http://example.com/images/2025/1757927159168-c5e05e09-3734-414e-8a18-b06779399bc6.png">
-<meta property="og:image" content="http://example.com/images/2025/1757928799216-ca658471-80f6-49be-b03b-bcae76a42585.png">
-<meta property="og:image" content="http://example.com/images/2025/1757927615645-0dd8f7f1-f593-43fd-8098-8b6be59c7433.png">
-<meta property="og:image" content="http://example.com/images/2025/1757929197972-d38e56a9-abf0-4aab-b0fb-538f00b712e0.png">
-<meta property="og:image" content="http://example.com/images/2025/1758100916334-8e11e2b8-7e75-4317-92ae-111248c5ad9a.png">
-<meta property="og:image" content="http://example.com/images/2025/1758100735750-31a96547-5e3a-4103-8741-311d215937e9.png">
-<meta property="og:image" content="http://example.com/images/2025/1758101815693-e5ab09e9-237d-4c09-8e9c-d85a99dba279.png">
-<meta property="og:image" content="http://example.com/images/2025/1758101900786-779ff937-3a6c-4e5b-b934-f91564143681.png">
-<meta property="og:image" content="http://example.com/images/2025/1758102004668-83f22cd8-0867-4979-96a1-342ca534e51a.png">
-<meta property="og:image" content="http://example.com/images/2025/1758102518226-7789a6b6-04ff-432a-8ef7-0155a7a12f2a.png">
-<meta property="og:image" content="http://example.com/images/2025/1758102164159-ccece639-5e46-4930-a31a-6b91db11b6de.png">
-<meta property="og:image" content="http://example.com/images/2025/1758181695105-fc253eba-5865-4e2b-b951-fbd258e22d6d.png">
-<meta property="og:image" content="http://example.com/images/2025/1758182126544-b1d5d56f-cb2a-4835-ab24-87963aed924a.png">
-<meta property="og:image" content="http://example.com/images/2025/1758182574066-01e8c6b1-1ed1-41cf-b98a-4ecaeaf735a6.png">
-<meta property="og:image" content="http://example.com/images/2025/1758184128747-378f2e73-d640-4be6-af1b-9ec79e3da319.png">
-<meta property="og:image" content="http://example.com/images/2025/1758184198489-ff8028ee-955c-4931-bc4a-5bd54688e57d.png">
-<meta property="og:image" content="http://example.com/images/2025/1758184505135-b22cff27-66b0-4846-98e5-cf1ec19810c4.png">
-<meta property="og:image" content="http://example.com/images/2025/1758185058508-915ff1e0-a949-4581-be20-e5f41cb5819f.png">
-<meta property="og:image" content="http://example.com/images/2025/1758185841083-6cdf4d43-1b73-44fe-b2cc-6f5329a349a4.png">
-<meta property="og:image" content="http://example.com/images/2025/1758186000872-46085dec-98ae-4541-b990-224336c8af8c.png">
-<meta property="og:image" content="http://example.com/images/2025/1758186364703-212d0dee-1b7b-479f-bafe-f54f97014061.png">
-<meta property="og:image" content="http://example.com/images/2025/1758186378896-9297eb22-d02e-40c2-822a-d096796d925d.png">
-<meta property="og:image" content="http://example.com/images/2025/1758187691949-f40ec1ec-ce54-4073-83ad-67b4fe96f66c.png">
-<meta property="og:image" content="http://example.com/images/2025/1758189266864-1a3c5107-31b2-4ae0-a8ce-1f60bb3cc200.png">
-<meta property="og:image" content="http://example.com/images/2025/1758267155603-7cd6b07d-fc41-492d-ad58-143bc4d279d6.png">
-<meta property="og:image" content="http://example.com/images/2025/1758268109591-01b55c6f-4bea-424f-9e49-58ba279e347b.png">
-<meta property="og:image" content="http://example.com/images/2025/1758268700773-cf1b55ff-4c06-45df-967d-6056e513b729.png">
-<meta property="og:image" content="http://example.com/images/2025/1758268973247-6fed7b71-ab44-4ad5-952c-acac467a8e11.png">
-<meta property="og:image" content="http://example.com/images/2025/1758268957624-c2577e01-ecff-49a2-95e9-c4594a937c79.png">
-<meta property="og:image" content="http://example.com/images/2025/1758268824656-81fb896c-2862-419c-9ed7-ca8222b8452a.png">
-<meta property="og:image" content="http://example.com/images/2025/1758269592847-6b3e1925-3438-4db7-a8f7-7802460a88ae.png">
-<meta property="og:image" content="http://example.com/images/2025/1758269577292-91e7e822-780e-4574-aa09-ed728c11d9b1.png">
-<meta property="og:image" content="http://example.com/images/2025/1758530811581-3e1358ec-eded-4744-a07d-9f3e80eea943.png">
-<meta property="og:image" content="http://example.com/images/2025/1758531548391-495eb612-4ac6-412f-b40e-0d1df6b1609e.png">
-<meta property="og:image" content="http://example.com/images/2025/1758532146515-5071abce-1baa-43cf-a4c6-b1dc849994e7.png">
-<meta property="og:image" content="http://example.com/images/2025/1758532820366-9dc5c56f-92e5-4dbd-8ea2-f620bd32f218.png">
-<meta property="og:image" content="http://example.com/images/2025/1758533046533-06883e3e-2d56-4720-b6bd-cc4e669c0067.png">
-<meta property="og:image" content="http://example.com/images/2025/1758533562226-fb0a5dc5-46cd-451f-9dd3-a7515bc3ba32.png">
-<meta property="og:image" content="http://example.com/images/2025/1758533816364-3d741f9d-68cf-4936-9f1f-5076ac102f37.png">
-<meta property="og:image" content="http://example.com/images/2025/1758534576382-a6bb1252-1f3b-4fca-b590-02c0a850b137.png">
-<meta property="og:image" content="http://example.com/images/2025/1758534761748-9d3727c7-680c-4019-8f84-0aaeae7e02e1.png">
-<meta property="og:image" content="http://example.com/images/2025/1758535135184-71b1bbd9-c004-440f-946e-ef3099686080.png">
-<meta property="og:image" content="http://example.com/images/2025/1758535426917-e6eeebae-f59f-4cf2-9f3e-9f2ed3289a44.png">
-<meta property="og:image" content="http://example.com/images/2025/1758535542455-93a4c1d1-d719-47a7-bdd6-16b6c954d5b8.png">
-<meta property="og:image" content="http://example.com/images/2025/1758536426013-0d545721-19fd-48f8-bdab-7f217f32cc35.png">
-<meta property="og:image" content="http://example.com/images/2025/1758782753848-fb5120c0-b780-4a69-af89-40e050d6e938.png">
-<meta property="og:image" content="http://example.com/images/2025/1758781995539-43f27e5b-dfb4-4437-a61d-0e18c1241bb1.png">
-<meta property="og:image" content="http://example.com/images/2025/1758782821807-d433d218-b7e7-4078-801b-2d651212df01.png">
-<meta property="og:image" content="http://example.com/images/2025/1758789140972-bf746e52-91a9-4ff2-8a7b-514d8ded8ee6.png">
-<meta property="og:image" content="http://example.com/images/2025/1758789927036-d6b90296-7cfd-4c8f-8dcc-1b2aeacabe1b.png">
-<meta property="og:image" content="http://example.com/images/2025/1758869620233-d1cd9de0-d10c-40a3-b33a-6ba8d312f8c5.png">
-<meta property="og:image" content="http://example.com/images/2025/1758870076176-9d7c6a1a-b9c3-4b85-ad3a-c285d18e850a.png">
-<meta property="og:image" content="http://example.com/images/2025/1758871807767-277e44ac-93ed-4070-bdbd-e6466f9149d9.png">
-<meta property="og:image" content="http://example.com/images/2025/1758871774272-1d401b4c-11ca-49bb-a556-51b6fd502302.png">
-<meta property="og:image" content="http://example.com/images/2025/1758872696654-c9b482fa-4a66-4666-a11d-8b08debb4b60.png">
-<meta property="og:image" content="http://example.com/images/2025/1758873118465-d03dc15c-7b77-4453-a10e-96120fe16195.png">
-<meta property="og:image" content="http://example.com/images/2025/1758876681819-77f5ec48-be37-4ef8-9d9b-1cdac7623677.png">
-<meta property="og:image" content="http://example.com/images/2025/1758873508265-a08acfac-e2ee-44a5-9561-4420f84e989e.png">
-<meta property="og:image" content="http://example.com/images/2025/1758878274379-bc5b9ab6-6d22-4fd3-9b2b-c44d8733b656.png">
-<meta property="og:image" content="http://example.com/images/2025/1759114854822-fd9910f1-7e23-4cf5-ac9b-7849e9e5374a.jpeg">
-<meta property="og:image" content="http://example.com/images/2025/1759114862644-111c6903-93d0-42db-8c08-d7ae495a1fcc.jpeg">
-<meta property="og:image" content="http://example.com/images/2025/1759993107704-51be5e94-e25c-4138-9005-22514b11d65e.png">
-<meta property="og:image" content="http://example.com/images/2025/1759994108623-964dd532-865d-464a-86b8-d83686cd495e.png">
-<meta property="og:image" content="http://example.com/images/2025/1759994181172-d206b803-3f95-4a67-a33c-21cef9274428.png">
-<meta property="og:image" content="http://example.com/images/2025/1759996907274-8aa50a26-e318-4955-95a7-8331511ca591.png">
-<meta property="og:image" content="http://example.com/images/2025/1759996942513-6ca671fd-005e-41b6-a008-6f4f09371a8b.png">
-<meta property="og:image" content="http://example.com/images/2025/1759997018609-2841cb30-7a69-4741-8571-f207448901d0.png">
-<meta property="og:image" content="http://example.com/images/2025/1759995358665-15d561d1-5f41-413c-96f5-4f7e1886f7da.png">
-<meta property="og:image" content="http://example.com/images/2025/1760516609495-9757c1a6-0e04-4b7c-994e-538f0054e0d6.png">
-<meta property="og:image" content="http://example.com/images/2025/1760519926387-19a7161e-92eb-42f0-a5c3-a9dd7f153af6.png">
-<meta property="og:image" content="http://example.com/images/2025/1761117803453-ac6235dd-3f51-4584-a147-7ec8f8e76e2c.png">
-<meta property="og:image" content="http://example.com/images/2025/1761117848646-4735c02c-f1d9-4e7d-8f43-1a495b7f6de4.png">
-<meta property="og:image" content="http://example.com/images/2025/1761121805151-9a992c0f-f010-4c09-a1f1-51c41de26662.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757581600820-5265b73c-1697-439b-8e3e-0f52eb6e06ba.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757647580444-cf0a8219-e9e0-4dc8-b201-b33870a4e8dd.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757647710267-bbd31de8-7c7d-4210-b846-bef7c8c66ec9.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757648003373-bb26c145-7a25-4d35-8627-aa44b6339534.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757648141991-182e1336-9c98-48b1-8fe6-acfc029bccfe.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757648385076-c3fac059-06af-40b8-a32a-046f1c202c7d.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757659785675-9b021681-1727-4cc1-8de0-d1d2d9718076.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757660347250-096c357c-82a9-4666-9dc5-0e0c5cde9889.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757660763253-e1264610-2814-4bdc-9f81-29a21933e8e1.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757664653858-1f7313c8-5678-41f8-b11d-eeecad1f85f0.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757903610771-c57bbbff-4b55-484d-b579-bb7e9ddb62f8.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757905611765-c26da1b2-20c6-4f85-b6c8-0e495c8cb0e4.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757925688976-af56469e-1616-43d4-87ee-b073c75d9ef5.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757926888276-14279fa2-3102-447b-869d-4511b2bb8cdf.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757927159168-c5e05e09-3734-414e-8a18-b06779399bc6.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757928799216-ca658471-80f6-49be-b03b-bcae76a42585.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757927615645-0dd8f7f1-f593-43fd-8098-8b6be59c7433.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1757929197972-d38e56a9-abf0-4aab-b0fb-538f00b712e0.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758100916334-8e11e2b8-7e75-4317-92ae-111248c5ad9a.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758100735750-31a96547-5e3a-4103-8741-311d215937e9.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758101815693-e5ab09e9-237d-4c09-8e9c-d85a99dba279.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758101900786-779ff937-3a6c-4e5b-b934-f91564143681.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758102004668-83f22cd8-0867-4979-96a1-342ca534e51a.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758102518226-7789a6b6-04ff-432a-8ef7-0155a7a12f2a.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758102164159-ccece639-5e46-4930-a31a-6b91db11b6de.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758181695105-fc253eba-5865-4e2b-b951-fbd258e22d6d.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758182126544-b1d5d56f-cb2a-4835-ab24-87963aed924a.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758182574066-01e8c6b1-1ed1-41cf-b98a-4ecaeaf735a6.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758184128747-378f2e73-d640-4be6-af1b-9ec79e3da319.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758184198489-ff8028ee-955c-4931-bc4a-5bd54688e57d.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758184505135-b22cff27-66b0-4846-98e5-cf1ec19810c4.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758185058508-915ff1e0-a949-4581-be20-e5f41cb5819f.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758185841083-6cdf4d43-1b73-44fe-b2cc-6f5329a349a4.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758186000872-46085dec-98ae-4541-b990-224336c8af8c.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758186364703-212d0dee-1b7b-479f-bafe-f54f97014061.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758186378896-9297eb22-d02e-40c2-822a-d096796d925d.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758187691949-f40ec1ec-ce54-4073-83ad-67b4fe96f66c.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758189266864-1a3c5107-31b2-4ae0-a8ce-1f60bb3cc200.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758267155603-7cd6b07d-fc41-492d-ad58-143bc4d279d6.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758268109591-01b55c6f-4bea-424f-9e49-58ba279e347b.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758268700773-cf1b55ff-4c06-45df-967d-6056e513b729.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758268973247-6fed7b71-ab44-4ad5-952c-acac467a8e11.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758268957624-c2577e01-ecff-49a2-95e9-c4594a937c79.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758268824656-81fb896c-2862-419c-9ed7-ca8222b8452a.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758269592847-6b3e1925-3438-4db7-a8f7-7802460a88ae.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758269577292-91e7e822-780e-4574-aa09-ed728c11d9b1.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758530811581-3e1358ec-eded-4744-a07d-9f3e80eea943.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758531548391-495eb612-4ac6-412f-b40e-0d1df6b1609e.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758532146515-5071abce-1baa-43cf-a4c6-b1dc849994e7.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758532820366-9dc5c56f-92e5-4dbd-8ea2-f620bd32f218.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758533046533-06883e3e-2d56-4720-b6bd-cc4e669c0067.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758533562226-fb0a5dc5-46cd-451f-9dd3-a7515bc3ba32.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758533816364-3d741f9d-68cf-4936-9f1f-5076ac102f37.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758534576382-a6bb1252-1f3b-4fca-b590-02c0a850b137.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758534761748-9d3727c7-680c-4019-8f84-0aaeae7e02e1.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758535135184-71b1bbd9-c004-440f-946e-ef3099686080.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758535426917-e6eeebae-f59f-4cf2-9f3e-9f2ed3289a44.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758535542455-93a4c1d1-d719-47a7-bdd6-16b6c954d5b8.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758536426013-0d545721-19fd-48f8-bdab-7f217f32cc35.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758782753848-fb5120c0-b780-4a69-af89-40e050d6e938.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758781995539-43f27e5b-dfb4-4437-a61d-0e18c1241bb1.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758782821807-d433d218-b7e7-4078-801b-2d651212df01.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758789140972-bf746e52-91a9-4ff2-8a7b-514d8ded8ee6.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758789927036-d6b90296-7cfd-4c8f-8dcc-1b2aeacabe1b.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758869620233-d1cd9de0-d10c-40a3-b33a-6ba8d312f8c5.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758870076176-9d7c6a1a-b9c3-4b85-ad3a-c285d18e850a.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758871807767-277e44ac-93ed-4070-bdbd-e6466f9149d9.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758871774272-1d401b4c-11ca-49bb-a556-51b6fd502302.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758872696654-c9b482fa-4a66-4666-a11d-8b08debb4b60.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758873118465-d03dc15c-7b77-4453-a10e-96120fe16195.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758876681819-77f5ec48-be37-4ef8-9d9b-1cdac7623677.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758873508265-a08acfac-e2ee-44a5-9561-4420f84e989e.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1758878274379-bc5b9ab6-6d22-4fd3-9b2b-c44d8733b656.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759114854822-fd9910f1-7e23-4cf5-ac9b-7849e9e5374a.jpeg">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759114862644-111c6903-93d0-42db-8c08-d7ae495a1fcc.jpeg">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759993107704-51be5e94-e25c-4138-9005-22514b11d65e.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759994108623-964dd532-865d-464a-86b8-d83686cd495e.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759994181172-d206b803-3f95-4a67-a33c-21cef9274428.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759996907274-8aa50a26-e318-4955-95a7-8331511ca591.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759996942513-6ca671fd-005e-41b6-a008-6f4f09371a8b.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759997018609-2841cb30-7a69-4741-8571-f207448901d0.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1759995358665-15d561d1-5f41-413c-96f5-4f7e1886f7da.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1760516609495-9757c1a6-0e04-4b7c-994e-538f0054e0d6.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1760519926387-19a7161e-92eb-42f0-a5c3-a9dd7f153af6.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1761117803453-ac6235dd-3f51-4584-a147-7ec8f8e76e2c.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1761117848646-4735c02c-f1d9-4e7d-8f43-1a495b7f6de4.png">
+<meta property="og:image" content="https://change444.github.io/images/2025/1761121805151-9a992c0f-f010-4c09-a1f1-51c41de26662.png">
 <meta property="article:published_time" content="2025-08-07T09:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T02:02:25.949Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2025/1757581600820-5265b73c-1697-439b-8e3e-0f52eb6e06ba.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2025/1757581600820-5265b73c-1697-439b-8e3e-0f52eb6e06ba.png">
   
   
   
@@ -160,7 +160,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -815,7 +815,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>内存马分析</div>
-      <div>http://example.com/2025/08/07/内存马/</div>
+      <div>https://change444.github.io/2025/08/07/内存马/</div>
     </div>
     <div class="license-meta">
       

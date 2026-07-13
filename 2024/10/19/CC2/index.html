@@ -22,27 +22,27 @@
     <meta name="description" content="前言在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用 流程图整体来说跟cc4差不多，区别就是cc2没有用ChainedTransformer和Transformer数组，同时用InvokerTransformer代替了InstantiateTransformer 1234567Pri">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CC2反序列化链分析">
-<meta property="og:url" content="http://example.com/2024/10/19/CC2/index.html">
+<meta property="og:url" content="https://change444.github.io/2024/10/19/CC2/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用 流程图整体来说跟cc4差不多，区别就是cc2没有用ChainedTransformer和Transformer数组，同时用InvokerTransformer代替了InstantiateTransformer 1234567Pri">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png">
-<meta property="og:image" content="http://example.com/images/2024/1733302015742-077a166b-0efb-4400-8379-b4665bb38493.png">
-<meta property="og:image" content="http://example.com/images/2024/1733302106548-ce0bd89d-8c23-48dc-a054-adccc6097145.png">
-<meta property="og:image" content="http://example.com/images/2024/1733302719383-5fd9a3b9-1155-4fe9-b385-330d367e6900.png">
-<meta property="og:image" content="http://example.com/images/2024/1733302927693-c6c1fadf-dc85-4eba-b9f9-72c2efc70cba.png">
-<meta property="og:image" content="http://example.com/images/2024/1733303010889-7809c6d3-550e-417c-9f96-543b68738651.png">
-<meta property="og:image" content="http://example.com/images/2024/1733303104986-e173a010-ed74-4b81-9c0b-491ea3c221a9.png">
-<meta property="og:image" content="http://example.com/images/2024/1733303200971-fe831089-cc6d-4381-b1d6-78181d6d43e1.png">
-<meta property="og:image" content="http://example.com/images/2024/1733303377091-3ddcaa70-e73a-4c49-9a40-bea09ebf8c87.png">
-<meta property="og:image" content="http://example.com/images/2024/1733303988604-08f377a8-38ae-4f38-8d15-97841349700c.png">
-<meta property="og:image" content="http://example.com/images/2024/1733052326163-aa65ac66-378b-4788-a742-e5fe94e7627f.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733302015742-077a166b-0efb-4400-8379-b4665bb38493.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733302106548-ce0bd89d-8c23-48dc-a054-adccc6097145.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733302719383-5fd9a3b9-1155-4fe9-b385-330d367e6900.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733302927693-c6c1fadf-dc85-4eba-b9f9-72c2efc70cba.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733303010889-7809c6d3-550e-417c-9f96-543b68738651.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733303104986-e173a010-ed74-4b81-9c0b-491ea3c221a9.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733303200971-fe831089-cc6d-4381-b1d6-78181d6d43e1.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733303377091-3ddcaa70-e73a-4c49-9a40-bea09ebf8c87.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733303988604-08f377a8-38ae-4f38-8d15-97841349700c.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1733052326163-aa65ac66-378b-4788-a742-e5fe94e7627f.png">
 <meta property="article:published_time" content="2024-10-19T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T01:53:22.023Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2024/1733301706389-c0dcd45a-ace6-4546-a4c6-4ae143fca07d.png">
   
   
   
@@ -84,7 +84,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -344,7 +344,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>CC2反序列化链分析</div>
-      <div>http://example.com/2024/10/19/CC2/</div>
+      <div>https://change444.github.io/2024/10/19/CC2/</div>
     </div>
     <div class="license-meta">
       

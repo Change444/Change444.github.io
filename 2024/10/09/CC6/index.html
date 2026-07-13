@@ -22,24 +22,24 @@
     <meta name="description" content="前言在CC1–LazyMap这条链子中我们用到了AnnotationInvocationHandler这个类来触发LazyMap.get，但是，这个类在8u71就没了，所以导致cc1有很大的jdk版本限制。这个问题也很好解决，上次分析LazyMap链时我们看到get有着高达一千多个用法，找个合适的类替换AnnotationInvocationHandler类即可。 构造因为get的用法实在太多，这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CC6反序列化链分析">
-<meta property="og:url" content="http://example.com/2024/10/09/CC6/index.html">
+<meta property="og:url" content="https://change444.github.io/2024/10/09/CC6/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言在CC1–LazyMap这条链子中我们用到了AnnotationInvocationHandler这个类来触发LazyMap.get，但是，这个类在8u71就没了，所以导致cc1有很大的jdk版本限制。这个问题也很好解决，上次分析LazyMap链时我们看到get有着高达一千多个用法，找个合适的类替换AnnotationInvocationHandler类即可。 构造因为get的用法实在太多，这">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/2024/1731036430471-246f4f6e-3af2-4ba8-bca2-2428d10a610e.png">
-<meta property="og:image" content="http://example.com/images/2024/1731036795850-201cc7f1-ee4d-48cc-b8b3-ed32fbd09e56.png">
-<meta property="og:image" content="http://example.com/images/2024/1731037195295-09cd141a-4d57-4a77-9b7f-197b2450006e.png">
-<meta property="og:image" content="http://example.com/images/2024/1731037536137-c807bc79-9f88-45dd-9548-6ca386ec954c.png">
-<meta property="og:image" content="http://example.com/images/2024/1731291562766-2731d53d-e6f7-4131-bb25-2348d6aa2dac.jpeg">
-<meta property="og:image" content="http://example.com/images/2024/1731292449128-49e959df-4542-4d94-bd77-add5fee3ac4f.png">
-<meta property="og:image" content="http://example.com/images/2024/1731296758501-37785c7e-70d5-4db3-9e59-7669245577d8.png">
-<meta property="og:image" content="http://example.com/images/2024/1731297745947-fe436935-a93a-4efb-a6f4-e2b319358441.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731036430471-246f4f6e-3af2-4ba8-bca2-2428d10a610e.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731036795850-201cc7f1-ee4d-48cc-b8b3-ed32fbd09e56.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731037195295-09cd141a-4d57-4a77-9b7f-197b2450006e.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731037536137-c807bc79-9f88-45dd-9548-6ca386ec954c.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731291562766-2731d53d-e6f7-4131-bb25-2348d6aa2dac.jpeg">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731292449128-49e959df-4542-4d94-bd77-add5fee3ac4f.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731296758501-37785c7e-70d5-4db3-9e59-7669245577d8.png">
+<meta property="og:image" content="https://change444.github.io/images/2024/1731297745947-fe436935-a93a-4efb-a6f4-e2b319358441.png">
 <meta property="article:published_time" content="2024-10-09T07:30:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T01:52:29.538Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/images/2024/1731036430471-246f4f6e-3af2-4ba8-bca2-2428d10a610e.png">
+<meta name="twitter:image" content="https://change444.github.io/images/2024/1731036430471-246f4f6e-3af2-4ba8-bca2-2428d10a610e.png">
   
   
   
@@ -81,7 +81,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -337,7 +337,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>CC6反序列化链分析</div>
-      <div>http://example.com/2024/10/09/CC6/</div>
+      <div>https://change444.github.io/2024/10/09/CC6/</div>
     </div>
     <div class="license-meta">
       

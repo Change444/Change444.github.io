@@ -22,26 +22,26 @@
     <meta name="description" content="前言本篇主要是对代码审计学习历程的记录和总结，包括一些常见漏洞的审计技巧、该如何开始代码审计以及代码审计需要的一些基础知识 基础知识需要掌握的一些知识点为了看懂代码，首先要掌握一些基本的开发思想，了解项目开发的结构，以下是一些常见的框架：  JavaWeb（掌握）：动态⽹⻚开发技术Servlet&amp;Jsp；服务容器Tomcat使⽤ &amp; HTTP协议。  Java开发框架（掌握）：We">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java代码审计基础">
-<meta property="og:url" content="http://example.com/2026/04/04/Java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:url" content="https://change444.github.io/2026/04/04/Java%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="Change&#39;s blog">
 <meta property="og:description" content="前言本篇主要是对代码审计学习历程的记录和总结，包括一些常见漏洞的审计技巧、该如何开始代码审计以及代码审计需要的一些基础知识 基础知识需要掌握的一些知识点为了看懂代码，首先要掌握一些基本的开发思想，了解项目开发的结构，以下是一些常见的框架：  JavaWeb（掌握）：动态⽹⻚开发技术Servlet&amp;Jsp；服务容器Tomcat使⽤ &amp; HTTP协议。  Java开发框架（掌握）：We">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/assets/image-20260401125623-0f7oxfs.png">
-<meta property="og:image" content="http://example.com/assets/image-20260401143623-9f14mmb.png">
-<meta property="og:image" content="http://example.com/assets/image-20260401143803-3zsvbaw.png">
-<meta property="og:image" content="http://example.com/assets/image-20260401144501-0s9m6o4.png">
-<meta property="og:image" content="http://example.com/assets/image-20260316180756-xcrh9t3.png">
-<meta property="og:image" content="http://example.com/assets/image-20260316180952-hzqfysd.png">
-<meta property="og:image" content="http://example.com/assets/image-20260401145704-qfdw0rs.png">
-<meta property="og:image" content="http://example.com/assets/image-20260404150430-ezg2xx9.png">
-<meta property="og:image" content="http://example.com/assets/image-20260330145047-p3phbef.png">
-<meta property="og:image" content="http://example.com/assets/image-20260330145850-vy6puv1.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260401125623-0f7oxfs.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260401143623-9f14mmb.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260401143803-3zsvbaw.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260401144501-0s9m6o4.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260316180756-xcrh9t3.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260316180952-hzqfysd.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260401145704-qfdw0rs.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260404150430-ezg2xx9.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260330145047-p3phbef.png">
+<meta property="og:image" content="https://change444.github.io/assets/image-20260330145850-vy6puv1.png">
 <meta property="article:published_time" content="2026-04-04T10:30:00.000Z">
 <meta property="article:modified_time" content="2026-04-04T09:18:02.159Z">
 <meta property="article:author" content="Change">
 <meta property="article:tag" content="安全研究">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/assets/image-20260401125623-0f7oxfs.png">
+<meta name="twitter:image" content="https://change444.github.io/assets/image-20260401125623-0f7oxfs.png">
   
   
   
@@ -83,7 +83,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"change444.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -558,7 +558,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Java代码审计基础</div>
-      <div>http://example.com/2026/04/04/Java代码审计基础/</div>
+      <div>https://change444.github.io/2026/04/04/Java代码审计基础/</div>
     </div>
     <div class="license-meta">
       
