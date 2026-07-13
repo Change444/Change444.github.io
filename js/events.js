@@ -124,35 +124,16 @@ Fluid.events = {
     if (topArrow.length === 0) {
       return;
     }
-    var board = jQuery('#board');
-    if (board.length === 0) {
-      return;
-    }
-    var posDisplay = false;
+    // Display: show after scrolling past ~300px
     var scrollDisplay = false;
-    // Position
-    var setTopArrowPos = function() {
-      var boardRight = board[0].getClientRects()[0].right;
-      var bodyWidth = document.body.offsetWidth;
-      var right = bodyWidth - boardRight;
-      posDisplay = right >= 50;
-      topArrow.css({
-        'bottom': posDisplay && scrollDisplay ? '20px' : '-60px',
-        'right' : right - 64 + 'px'
-      });
-    };
-    setTopArrowPos();
-    jQuery(window).resize(setTopArrowPos);
-    // Display
-    var headerHeight = board.offset().top;
     Fluid.utils.listenScroll(function() {
-      var scrollHeight = document.body.scrollTop + document.documentElement.scrollTop;
-      scrollDisplay = scrollHeight >= headerHeight;
+      var scrollHeight = document.body.scrollTop || document.documentElement.scrollTop;
+      scrollDisplay = scrollHeight >= 300;
       topArrow.css({
-        'bottom': posDisplay && scrollDisplay ? '20px' : '-60px'
+        'bottom': scrollDisplay ? '20px' : '-60px'
       });
     });
-    // Click
+    // Click: smooth scroll to top
     topArrow.on('click', function() {
       jQuery('body,html').animate({
         scrollTop: 0,

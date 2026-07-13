@@ -8,8 +8,8 @@
 <head>
   <meta charset="UTF-8">
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -81,10 +81,7 @@
   
 
   <header>
-    
-
-<div class="header-inner" style="height: 100vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+    <nav id="navbar" class="navbar fixed-top navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand" href="/">
       <strong>Change</strong>
@@ -96,69 +93,53 @@
       <div class="animated-icon"><span></span><span></span><span></span></div>
     </button>
 
-    <!-- Collapsible content (desktop) -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto text-center">
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/" target="_self">
-                <i class="iconfont icon-home-fill"></i>
-                <span>首页</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/" target="_self">
+              <span>首页</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/" target="_self">
+              <span>归档</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/" target="_self">
-                <i class="iconfont icon-category-fill"></i>
-                <span>分类</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/" target="_self">
+              <span>分类</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>标签</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/" target="_self">
+              <span>标签</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>关于</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/" target="_self">
+              <span>关于</span>
+            </a>
+          </li>
         
         
           <li class="nav-item" id="search-btn">
@@ -180,182 +161,49 @@
   </div>
 </nav>
 
-<!-- Mobile grid menu overlay -->
-<div id="mobile-grid-menu" class="d-lg-none">
-  <div class="mobile-grid-menu-inner">
-    <div class="container">
-      <div class="row">
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-home-fill"></i>
-                  <span>首页</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/archives/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-archive-fill"></i>
-                  <span>归档</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/categories/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-category-fill"></i>
-                  <span>分类</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/tags/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-tags-fill"></i>
-                  <span>标签</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/about/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-user-fill"></i>
-                  <span>关于</span>
-                </div>
-              </a>
-            </div>
-          
-        
-        
-          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
-            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              <div class="mobile-grid-item">
-                <i class="iconfont icon-search"></i>
-                <span>搜索</span>
-              </div>
-            </a>
-          </div>
-        
-        
-          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
-               data-label-light="开灯"
-               data-label-dark="关灯">
-            <a href="javascript:;" aria-label="Color Toggle">
-              <div class="mobile-grid-item">
-                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
-                <span id="mobile-color-toggle-label">关灯</span>
-              </div>
-            </a>
-          </div>
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="欢迎来到我的博客"></span>
-          
-        </div>
-
-        
-      </div>
-
-      
-        <div class="scroll-down-bar">
-          <i class="iconfont icon-arrowdown"></i>
-        </div>
-      
-    </div>
-  </div>
-</div>
-
-
-
-</div>
-
   </header>
 
   <main>
     
-      <div class="container nopadding-x-md">
-        <div id="board"
-          style="margin-top: 0">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
 <h1 style="display: none">Change&#39;s blog</h1>
 
-  <div class="row mx-auto index-card">
+<!-- Hero section -->
+<div class="hero-section">
+  <div class="container">
     
+      <img src="/img/avatar.png" srcset="/img/loading.gif" lazyload class="hero-avatar" alt="avatar">
     
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+    <div class="hero-name">Change</div>
+    
+      <div class="hero-desc">欢迎来到我的博客</div>
+    
+  </div>
+</div>
+
+<!-- Post list -->
+<div class="post-list">
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2026/01/15/0x03-%E5%9F%9F%E5%A7%94%E6%B4%BE/" target="_self">
           域委派攻击
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/15/0x03-%E5%9F%9F%E5%A7%94%E6%B4%BE/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           前言域委派是一种机制，它允许某个计算机或服务账号在已通过身份验证的用户的上下文中，代表该用户去访问网络中其他计算机或服务上的资源。 例如在下图中jack要通过web服务器来访问后台文服，但是服务账号websvc本身是没有权限访问文服的，此时，就要websvc就要代表jack去访问文服，这就是委派。  委派的目的是为了解决多层级服务的访问问题，让用户的凭据不会在每一层都传递，而是通过委派机制让后端服
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2026-01-15 15:30" pubdate>
+            2026-01-15
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-01-15 15:30" pubdate>
-              2026-01-15
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -374,49 +222,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%86%85%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E5%AD%A6%E4%B9%A0/">#域内攻击手法学习</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2026/01/09/0x02-%E5%93%88%E5%B8%8C%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB/" target="_self">
           哈希中继攻击
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/09/0x02-%E5%93%88%E5%B8%8C%E4%B8%AD%E7%BB%A7%E6%94%BB%E5%87%BB/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           在NTLM介绍那章我们讲了NTLM认证分为四个阶段，分别为  协商（客户端-&gt;服务端） 质询（服务端-&gt;客户端）（会生成Challenge并发送） 响应（客户端-&gt;服务端）（结合Challenge生成response） 验证（服务端-&gt;客户端）   如果我们能作为中间人截获这一过程，那么下面这种情境将成为可能  为什么能中继？NTLM协议的设计缺陷在于，它的“质询&#x2F
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2026-01-09 15:30" pubdate>
+            2026-01-09
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-01-09 15:30" pubdate>
-              2026-01-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -435,49 +266,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%86%85%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E5%AD%A6%E4%B9%A0/">#域内攻击手法学习</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2026/01/07/0x01-%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92%E6%94%BB%E5%87%BB/" target="_self">
           哈希传递攻击
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/07/0x01-%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92%E6%94%BB%E5%87%BB/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           什么是哈希传递攻击哈希传递攻击是基于NTLM认证的一种攻击方式。哈希传递攻击的利用前提是我们获得了某个用户的密码哈希值，但是解不开明文。这时我们可以利用利用了NTLM认证协议的一个设计特性：服务器在验证用户时，并不需要用户的明文密码，只需要验证用户提供的NTLM哈希值是否正确。在域环境中，大量计算机在安装时会使用相同的本地管理员账号和密码。因此，如果计算机的本地管理员账号密码相同，攻击者就能使用哈
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2026-01-07 15:30" pubdate>
+            2026-01-07
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-01-07 15:30" pubdate>
-              2026-01-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -496,49 +310,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%86%85%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E5%AD%A6%E4%B9%A0/">#域内攻击手法学习</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/12/19/%E5%9F%9F%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" target="_self">
           域环境搭建
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/12/19/%E5%9F%9F%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           推荐文章：https://blog.csdn.net/qq_28205153/article/details/113827476?spm=1001.2014.3001.5502 域控密码：Czq20050110 网络拓扑 搭建步骤设置静态ip因为我们这个域比较小，为了方便，所以三台主机都设置静态ip 域控使用ipconfig &#x2F;all查询网络配置信息，然后打开网络适配器的属性，将ip地址
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-12-19 15:30" pubdate>
+            2025-12-19
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-12-19 15:30" pubdate>
-              2025-12-19
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -557,49 +354,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%86%85%E6%94%BB%E5%87%BB%E6%89%8B%E6%B3%95%E5%AD%A6%E4%B9%A0/">#域内攻击手法学习</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/11/24/0x05-%E7%BB%84%E7%AD%96%E7%95%A5/" target="_self">
           组策略
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/24/0x05-%E7%BB%84%E7%AD%96%E7%95%A5/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           组策略可以控制用户帐户和计算机帐户的工作环境。他提供了操作系统、应用程序和活动目录中用户设置的集中化管理和配置。有本机组策略和域的组策略。本机组策略用于计算机管理员统一管理本机以及所有用户，域内的组策略用于域管统一管理域内的所有计算机以及域用户。 组成它有这四大核心组件：  ​GPO​：组策略对象，是设置的集合，存储在域控的 SYSVOL​ 共享目录中（\\&lt;域名&gt;\SYSVOL）。
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-11-24 15:30" pubdate>
+            2025-11-24
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-24 15:30" pubdate>
-              2025-11-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -618,49 +398,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/">#域基础</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/11/19/0x04-%E5%9F%9F%E6%9D%83%E9%99%90/" target="_self">
           域权限
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/19/0x04-%E5%9F%9F%E6%9D%83%E9%99%90/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           windows访问控制模型Active Directory权限控制依赖windows访问控制模型来实现，关于windows访问控制模型是什么，用大白话讲就是定义谁在什么条件下可以对什么执行操作， 这个以后再细学。 windows 访问控制模型是由两部分组成。 ●   访问令牌（Access Token）包含用户的标识(User SID,Group SIDS)，以及特权列表。 ●   安全描述符（s
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-11-19 15:30" pubdate>
+            2025-11-19
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-19 15:30" pubdate>
-              2025-11-19
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -679,49 +442,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/">#域基础</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/11/12/0x03-LDAP/" target="_self">
           LDAP
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/12/0x03-LDAP/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           上一节我们说到Active Directry数据库依靠LDAP存储对象，这一节我们来详细讲一下LDAP协议 定义LDAP全称Lightweight Directory Access Protocol，轻量目录访问协议。 用于访问目录服务，树状存储，存储的单位是对象  LDAP的条目由三个部分组成 1、Distinguished Name (DN) &#x2F;&#x2F;专有名称 2、Object
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-11-12 15:30" pubdate>
+            2025-11-12
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-12 15:30" pubdate>
-              2025-11-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -740,49 +486,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/">#域基础</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/11/09/0x02-AD%E5%AF%B9%E8%B1%A1/" target="_self">
           AD对象
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/09/0x02-AD%E5%AF%B9%E8%B1%A1/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           AD对象（Active Directory Object）  是存储在Active Directory数据库（NTDS.dit）中的一条记录，它代表网络中的一个具体实体，如用户、计算机、组、策略等。每个 Active Directory 对象都由唯一的 SID（安全标识符）标识，被用来允许或拒绝对域中各种资源的访问。 AD对象的本质是什么？本质就是Active Directory数据库存储的条目，
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-11-09 15:30" pubdate>
+            2025-11-09
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-09 15:30" pubdate>
-              2025-11-09
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -801,49 +530,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/">#域基础</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/11/07/0x01-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" target="_self">
           域介绍
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/07/0x01-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           什么是Active DirectoryActive Directory 是由微软开发的一种目录服务，主要用于 Windows 网络环境，用于集中管理网络中的用户、计算机、策略和其他资源。 为什么叫目录服务？答：类似电话薄，人的信息（姓名，地址，电话号码）作为一个条目存在电话薄中供查询，扩展到网络，用户、计算机、打印机被抽象为对象，被存储在像电话薄一样的服务中供用户管理和查询，这类服务就被称为目录服
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-11-07 15:30" pubdate>
+            2025-11-07
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-07 15:30" pubdate>
-              2025-11-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -862,49 +574,32 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/">#域基础</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
+  
+    <article class="post-item">
+      <h2 class="post-title">
         <a href="/2025/11/01/0x00-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" target="_self">
           域常用指令
         </a>
       </h2>
-
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/11/01/0x00-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" target="_self">
-        <div>
+      
+        <div class="post-excerpt">
           12345678910111213141516net config workstation  查询当前登录域及登录用户信息net time /domain     查找时间服务器-查找域控net group &quot;domain controllers&quot; /domain 查看 domain controllers 组-查找域控nslookup  域名   查找域控IP-查找域控net
         </div>
-      </a>
-
-      <div class="index-btm post-metas">
+      
+      <div class="post-meta">
+        <span class="post-date">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2025-11-01 15:30" pubdate>
+            2025-11-01
+          </time>
+        </span>
         
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-11-01 15:30" pubdate>
-              2025-11-01
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
+          <span>
             <i class="iconfont icon-category"></i>
             
 
@@ -923,20 +618,12 @@
   
 </span>
 
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%9F%9F%E5%9F%BA%E7%A1%80/">#域基础</a>
-            
-          </div>
+          </span>
         
       </div>
     </article>
-  </div>
-
+  
+</div>
 
 
   <nav aria-label="navigation">
@@ -947,21 +634,26 @@
 
 
 
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    
+  </main>
 
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
+  <footer>
+    <div class="footer-inner">
+  <div>
+    &copy;2026 Change
+  </div>
+  
+    <div>
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+</div>
 
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+  </footer>
+
+  <!-- Search modal -->
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
      aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
@@ -982,23 +674,14 @@
   </div>
 </div>
 
-    
+  
 
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
+  <!-- Scroll to top -->
   
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
-    </div>
+    <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
   
-  
-  
-</div>
-
-  </footer>
 
   <!-- Scripts -->
   

