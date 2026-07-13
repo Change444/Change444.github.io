@@ -1088,11 +1088,6 @@ a.tag-link:hover,
     text-decoration: none;
   }
 }
-@media not print {
-  #seo-header {
-    display: none;
-  }
-}
 .hero-section {
   text-align: center;
   padding: 2rem 1rem 2rem;
